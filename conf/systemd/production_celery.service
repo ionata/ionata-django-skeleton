@@ -1,0 +1,20 @@
+[Unit]
+Description=Celery beat & worker
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+RuntimeDirectory=celery
+EnvironmentFile=/var/www/.env
+WorkingDirectory=/var/www
+ExecStart=/usr/local/bin/pipenv run celery worker \
+  -B \
+  -A webapp \
+  -l error \
+  -s /var/run/celery/celerybeat_schedule \
+  --pidfile /var/run/celery/celerybeat.pid
+
+[Install]
+WantedBy=multi-user.target

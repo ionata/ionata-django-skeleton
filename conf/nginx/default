@@ -1,0 +1,33 @@
+upstream gunicorn {
+  server unix:/var/run/gunicorn/gunicorn.socket;
+}
+
+set_real_ip_from 127.0.0.1;
+set_real_ip_from 10.0.0.0/24;
+
+real_ip_header X-Forwarded-For;
+real_ip_recursive on;
+
+server {
+  listen 80;
+  server_name _;
+
+  access_log off;
+  log_not_found off;
+  error_log /var/log/nginx/production-errors.log;
+
+  expires      0d;
+  proxy_read_timeout 1800;
+  proxy_redirect off;
+
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto $scheme;
+  proxy_set_header Host $http_host;
+  add_header Cache-Control no-cache;
+
+  # Redundant API location because IE11 fetch sends cookies
+  location /api/ { proxy_pass http://gunicorn/backend/api/; }
+  location /backend/ { proxy_pass http://gunicorn/backend/; }
+}
+
+# vim: filetype=config

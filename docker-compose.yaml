@@ -1,0 +1,41 @@
+version: '3'
+volumes: {home:, db:, minio1:, minio2:, redis:, npm:}
+services:
+  db:
+    environment: ["POSTGRES_USER=django", "POSTGRES_PASSWORD=django"]
+    image: "mdillon/postgis:9.6-alpine"
+    volumes: ["db:/var/lib/postgresql/data"]
+  redis:
+    image: "redis:3.2-alpine"
+    volumes: ["redis:/data"]
+  minio:
+    command: "server /export"
+    environment: ["MINIO_ACCESS_KEY=djangos3", "MINIO_SECRET_KEY=djangos3"]
+    image: "minio/minio"
+    volumes: ["minio1:/export", "minio2:/root/.config"]
+  backend: &backend
+    image: "ionata/django-backend"
+    command: "pipenv run django-cadmin runserver_plus 0.0.0.0:8000 --nopin"
+    links: ["db", "minio", "redis"]
+    environment:
+      PYTHONPATH: "/var/www/src"
+      PYTHONDONTWRITEBYTECODE: "nope"
+    stdin_open: true
+    tty: true
+    volumes:
+      - "home:/root"
+      - "./backend:/var/www"
+  celery:
+    <<: *backend
+    command: "pipenv run celery worker -A webapp -l info -B"
+  frontend:
+    command: "npm run --prefix /var/www dev"
+    image: "node"
+    volumes: ["./frontend:/var/www"]
+  web:
+    image: "nginx:mainline-alpine"
+    links: ["backend", "minio"]
+    ports: ["8000:80"]
+    volumes:
+      - "./conf/docker/nginx-${NGINX_CONF:-spa}.conf:/etc/nginx/nginx.conf"
+      - "./frontend:/var/www"

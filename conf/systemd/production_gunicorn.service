@@ -1,0 +1,19 @@
+[Unit]
+Description=Gunicorn daemon
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+RuntimeDirectory=gunicorn
+EnvironmentFile=/var/www/.env
+WorkingDirectory=/var/www
+ExecStart=/usr/local/bin/pipenv run gunicorn \
+  webapp.wsgi:application \
+  --access-logfile=- \
+  --timeout=60 \
+  --log-level=error \
+  --max-requests=500 \
+  --workers=5 \
+  --bind=unix:/var/run/gunicorn/gunicorn.socket
