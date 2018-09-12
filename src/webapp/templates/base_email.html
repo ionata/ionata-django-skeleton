@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; utf-8">
+  <style>
+    td a {
+      color: #1db0ed;
+    }
+  </style>
+</head>
+<body>
+  <table style="background: #f0f0f0" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <tr>
+      <td height="20"></td>
+    </tr>
+    <tr>
+      <td>
+        <table align="center" width="600" cellspacing="0" cellpadding="0" style="border: #ddd solid 1px; border-top: #1db0ed solid 6px; background: #fff;">
+          <tr>
+            <td colspan="3" height="20"></td>
+          </tr>
+          <tr>
+            <td width="20"></td>
+            <td style="font: 14px 'Open Sans', Helvetica, Arial, sans-serif;">
+              {% block content %}{% endblock %}
+            </td>
+            <td width="20"></td>
+          </tr>
+          <tr>
+            <td colspan="3" height="20"></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td height="20"></td>
+    </tr>
+  </table>
+</body>
+</html>

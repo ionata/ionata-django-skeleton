@@ -1,0 +1,72 @@
+# Compiled source #
+###################
+*.pyc
+
+# Archives #
+############
+*.7z
+*.dmg
+*.gz
+*.xz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Editor/IDE files #
+####################
+*.swp
+*.swo
+~$*
+.sass-cache
+.mypy_cache
+.ropeproject
+*.kra
+.idea
+*.iml
+.envrc
+.direnv
+
+# Logs and databases #
+######################
+*.log
+*.psql
+*.sql
+*.sqlite
+*.sqlite3
+
+# OS generated files #
+######################
+.DS_Store*
+.cache/*
+.local/*
+Icon?
+Thumbs.db
+ehthumbs.db
+
+# Version Control #
+###################
+.bz
+.hg
+.git
+.svn
+
+# Project-instance #
+####################
+*.egg-info/
+node_modules/
+var/
+venv/
+venv*
+celerybeat-schedule*
+
+# Intentionally ignored stuff (notes, etc.) #
+#############################################
+/ignore/*
+.editables
+.site-packages
+.pypirc
+.-rplugin~
+.ssh*
+.env

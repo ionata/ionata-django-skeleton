@@ -1,0 +1,63 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+boto3 = "*"
+celery = {version = "*", extras = ["redis"]}
+dj-database-url = "*"
+dj-email-url = "*"
+django = "*"
+django-allauth = "*"
+django-anymail = {version = "*", extras = ["mailgun"]}
+django-cache-url = "*"
+django-celery-beat = "*"
+django-celery-results = "*"
+django-configurations = "*"
+django-cors-headers = "*"
+django-debug-toolbar = "*"
+django-enumfields = "*"
+django-environ = "*"
+django-extensions = "*"
+django-filter = "*"
+django-minimal-user = "*"
+django-rest-auth = "*"
+django-rest-swagger = "*"
+django-storages = "*"
+djangorestframework = "*"
+djangorestframework-filters = "*"
+djangorestframework-gis = "*"
+djangorestframework-jwt = "*"
+drf-extensions = "*"
+geopy = "*"
+gunicorn = "*"
+ionata-django-settings = "*"
+psycopg2 = "*"
+python-dateutil = "*"
+pytz = "*"
+sqlparse = "*"
+redis = "*"
+
+[dev-packages]
+faker = "*"
+ipdb = "*"
+ipython = "*"
+mypy = "*"
+ptpython = "*"
+pycodestyle = "*"
+pydocstyle = "*"
+pyhamcrest = "*"
+pylint = "*"
+pylint-django = "*"
+pyls-isort = "*"
+pyls-mypy = "*"
+python-language-server = "*"
+werkzeug = "*"
+yapf = "*"
+
+[requires]
+python_version = "3.7"
+
+[scripts]
+update = "bash -c 'django-cadmin migrate --no-input && django-cadmin collectstatic --no-input && django-cadmin setup_skeletons'"
