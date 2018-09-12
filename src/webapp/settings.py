@@ -11,7 +11,7 @@ from ionata_settings import drf as base
 class Project:
     """Settings unique to your project's base Configuration."""
 
-    APP_NAME = 'gulliver'
+    APP_NAME = 'webapp'
 
     @property
     def INSTALLED_APPS(self):  # pylint: disable=invalid-name
