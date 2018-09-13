@@ -24,7 +24,7 @@ services:
     tty: true
     volumes:
       - "home:/root"
-      - "./backend:/var/www"
+      - ".:/var/www"
   celery:
     <<: *backend
     command: "pipenv run celery worker -A webapp -l info -B"
