@@ -20,6 +20,15 @@ class Project:
             'webapp',
         ] + super().INSTALLED_APPS  # pylint: disable=no-member
 
+    REST_FRAMEWORK = {
+        **base.DRF.REST_FRAMEWORK,
+        **{
+            'DEFAULT_FILTER_BACKENDS': [
+                'rest_framework_filters.backends.RestFrameworkFilterBackend',
+            ]
+        }
+    }
+
 
 class Dev(Project, base.Dev):
     """Override development settings."""
