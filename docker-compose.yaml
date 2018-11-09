@@ -1,18 +1,23 @@
 version: '3'
 volumes: {home:, db:, minio1:, minio2:, redis:, npm:}
+networks: {default:}
 services:
   db:
     environment: ["POSTGRES_USER=django", "POSTGRES_PASSWORD=django"]
     image: "mdillon/postgis:9.6-alpine"
     volumes: ["db:/var/lib/postgresql/data"]
+    ports: ["5432:5432"]
   redis:
     image: "redis:3.2-alpine"
     volumes: ["redis:/data"]
+    ports: ["6379:6379"]
   minio:
     command: "server /export"
     environment: ["MINIO_ACCESS_KEY=djangos3", "MINIO_SECRET_KEY=djangos3"]
     image: "minio/minio"
     volumes: ["minio1:/export", "minio2:/root/.config"]
+    networks: {default: {aliases: ["minio", "min.io"]}}
+    ports: ["9000:9000"]
   backend: &backend
     image: "ionata/django-backend"
     command: "pipenv run django-cadmin runserver_plus 0.0.0.0:8000 --nopin"
@@ -27,7 +32,7 @@ services:
       - ".:/var/www"
   celery:
     <<: *backend
-    command: "pipenv run celery worker -A webapp -l info -B"
+    command: "pipenv run celery worker -A webapp -l info -B --scheduler django_celery_beat.schedulers:DatabaseScheduler"
   frontend:
     command: "npm run --prefix /var/www dev"
     image: "node"
