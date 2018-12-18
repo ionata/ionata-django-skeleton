@@ -17,3 +17,6 @@ ExecStart=/usr/local/bin/pipenv run gunicorn \
   --max-requests=500 \
   --workers=5 \
   --bind=unix:/var/run/gunicorn/gunicorn.socket
+
+[Install]
+WantedBy=multi-user.target
