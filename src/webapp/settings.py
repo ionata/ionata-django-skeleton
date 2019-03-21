@@ -2,7 +2,7 @@
 Settings for your application.
 Uncomment the correct imports for your base, and override as necessary.
 """
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 # from ionata_settings import base
 from ionata_settings import drf as base
@@ -12,6 +12,7 @@ class Project:
     """Settings unique to your project's base Configuration."""
 
     APP_NAME = 'webapp'
+    HEARTBEAT_SERVER: Optional[str] = None
 
     @property
     def INSTALLED_APPS(self):  # pylint: disable=invalid-name
@@ -38,6 +39,7 @@ class Prod(Project, base.Prod):
     """Override production settings."""
 
     SITE_URL = ''
+    HEARTBEAT_SERVER = "https://heartbeat.ionata.com.au"
     ADMINS: List[Tuple[str, str]] = []
     MANAGERS: List[Tuple[str, str]] = []
     ALLOWED_HOSTS: List[str] = []
