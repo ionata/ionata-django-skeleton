@@ -1,9 +1,11 @@
-[[source]]
-url = "https://pypi.org/simple"
-verify_ssl = true
-name = "pypi"
+[tool.poetry]
+name = "ionata-django-skeleton"
+version = "0.1.0"
+description = ""
+authors = ["Ionata <webmaster@ionata.com.au>"]
 
-[packages]
+[tool.poetry.dependencies]
+python = "^3.6"
 boto3 = "*"
 celery = {version = "*", extras = ["redis"]}
 dj-database-url = "*"
@@ -38,7 +40,7 @@ sqlparse = "*"
 redis = "*"
 coreapi = "*"
 
-[dev-packages]
+[tool.poetry.dev-dependencies]
 faker = "*"
 ipdb = "*"
 ipython = "*"
@@ -53,10 +55,8 @@ pyls-isort = "*"
 pyls-mypy = "*"
 python-language-server = "*"
 werkzeug = "*"
-yapf = "*"
+black = {version = "^18.3-alpha.0", allows-prereleases = true}
 
-[requires]
-python_version = "3.7"
-
-[scripts]
-update = "bash -c 'django-cadmin migrate --no-input && django-cadmin collectstatic --no-input && django-cadmin setup_skeletons'"
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
