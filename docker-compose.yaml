@@ -20,8 +20,9 @@ services:
     ports: ["9000:9000"]
   backend: &backend
     image: "ionata/django-backend"
-    command: "pipenv run django-cadmin runserver_plus 0.0.0.0:8000 --nopin"
+    command: "poetry run django-cadmin runserver_plus 0.0.0.0:8000 --nopin"
     links: ["db", "minio", "redis"]
+    env_file: ["./.env"]
     environment:
       PYTHONPATH: "/var/www/src"
       PYTHONDONTWRITEBYTECODE: "nope"
@@ -32,7 +33,7 @@ services:
       - ".:/var/www"
   celery:
     <<: *backend
-    command: "pipenv run celery worker -A webapp -l info -B --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    command: "poetry run celery worker -A webapp -l info -B --scheduler django_celery_beat.schedulers:DatabaseScheduler"
   frontend:
     command: "npm run --prefix /var/www dev"
     image: "node"
