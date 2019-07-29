@@ -9,7 +9,7 @@ Group=www-data
 RuntimeDirectory=celery
 EnvironmentFile=/var/www/.env
 WorkingDirectory=/var/www
-ExecStart=/usr/local/bin/pipenv run celery worker \
+ExecStart=/usr/local/bin/poetry run celery worker \
   -B \
   -A webapp \
   -l error \

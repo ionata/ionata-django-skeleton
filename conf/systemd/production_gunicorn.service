@@ -9,7 +9,7 @@ Group=www-data
 RuntimeDirectory=gunicorn
 EnvironmentFile=/var/www/.env
 WorkingDirectory=/var/www
-ExecStart=/usr/local/bin/pipenv run gunicorn \
+ExecStart=/usr/local/bin/poetry run gunicorn \
   webapp.wsgi:application \
   --access-logfile=- \
   --timeout=60 \
