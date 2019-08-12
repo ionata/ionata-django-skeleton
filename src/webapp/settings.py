@@ -21,6 +21,11 @@ class Project:
             'webapp',
         ] + super().INSTALLED_APPS  # pylint: disable=no-member
 
+    # pylint: disable=invalid-name,no-member
+    @property
+    def CORS_ORIGIN_WHITELIST(self):
+        return [item for item in self.ALLOWED_HOSTS if item != '*']
+
     REST_FRAMEWORK = {
         **base.DRF.REST_FRAMEWORK,
         **{

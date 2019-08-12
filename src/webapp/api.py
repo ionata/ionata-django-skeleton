@@ -9,7 +9,6 @@ from rest_framework import urls as rest_urls  # type: ignore
 from rest_framework.documentation import include_docs_urls  # type: ignore
 from rest_framework.routers import DefaultRouter  # type: ignore
 from rest_framework.viewsets import ViewSetMixin  # type: ignore
-from rest_framework_jwt import views as jwt_views  # type: ignore
 
 # Add viewsets here. The first argument is the name and the URL regex
 routes: List[Tuple[str, ViewSetMixin]] = [
@@ -25,13 +24,6 @@ api = [
     path('', include(v1_router.urls)),
     path('', include(rest_urls)),
     path('auth/', include(rest_auth_urls)),
-    path('auth/registration/', include(
-        rego if settings.ACCOUNT_REGISTRATION.lower() == 'enabled' else []
-    )),
-    path('auth/token/', include([
-        path('obtain/', jwt_views.obtain_jwt_token),
-        path('refresh/', jwt_views.refresh_jwt_token),
-        path('verify/', jwt_views.verify_jwt_token),
-    ])),
+    path('auth/registration/', include(rego)),
     path('docs/', include_docs_urls(title=settings.APP_NAME, public=False)),
 ]  # yapf: disable
