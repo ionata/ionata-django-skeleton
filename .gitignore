@@ -59,6 +59,8 @@ node_modules/
 var/
 venv/
 venv*
+.venv/
+.venv/*
 celerybeat-schedule*
 
 # Intentionally ignored stuff (notes, etc.) #
