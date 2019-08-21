@@ -1,9 +1,16 @@
+"""
+WSGI config for webapp project.
+
+It exposes the WSGI callable as a module-level variable named ``application``.
+
+For more information on this file, see
+https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
+"""
+
 import os
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webapp.settings')
-os.environ.setdefault('DJANGO_CONFIGURATION', 'Dev')
+from django.core.wsgi import get_wsgi_application
 
-# pylint: disable=wrong-import-position
-from configurations.wsgi import get_wsgi_application  # type: ignore # noqa
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
 
 application = get_wsgi_application()

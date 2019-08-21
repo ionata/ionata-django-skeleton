@@ -13,7 +13,7 @@ def task_result(sender, instance, raw=False, created=False, **kwargs):
     requests.post(
         f"{settings.HEARTBEAT_SERVER}/api/v1/updates/",
         {
-            "project": settings.APP_NAME,
+            "project": settings.PROJECT_NAME,
             "status": instance.status,
             "task": instance.task_name,
         },

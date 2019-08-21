@@ -10,10 +10,11 @@ RuntimeDirectory=celery
 EnvironmentFile=/var/www/.env
 WorkingDirectory=/var/www
 ExecStart=/usr/local/bin/poetry run celery worker \
-  -B \
-  -A webapp \
-  -l error \
-  -s /var/run/celery/celerybeat_schedule \
+  --beat \
+  --app webapp \
+  --queues ${CELERY_TASK_DEFAULT_QUEUE} \
+  --loglevel error \
+  --schedule-filename /var/run/celery/celerybeat_schedule \
   --pidfile /var/run/celery/celerybeat.pid
 
 [Install]

@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
@@ -30,7 +32,8 @@ def get_admin():
 
 def get_site():
     """Return the default site, creating it if not present."""
-    defaults = {"name": settings.APP_NAME, "domain": settings.URL.hostname}
+    url = urlparse(settings.SITE_URL)
+    defaults = {"name": settings.PROJECT_NAME, "domain": url.hostname}
     kwargs = {"pk": settings.SITE_ID, "defaults": defaults}
     return Site.objects.get_or_create(**kwargs)[0]
 
@@ -44,7 +47,7 @@ def schedule_check():
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        print(f"Running setup for {settings.APP_NAME}")
+        print(f"Running setup for {settings.PROJECT_NAME}")
         get_admin()
         get_site()
         schedule_check()

@@ -9,5 +9,5 @@ def send_beat():
         return
     requests.post(
         f"{settings.HEARTBEAT_SERVER}/api/v1/updates/",
-        {"project": settings.APP_NAME, "status": "HEARTBEAT", "task": "send_beat"},
+        {"project": settings.PROJECT_NAME, "status": "HEARTBEAT", "task": "send_beat"},
     )

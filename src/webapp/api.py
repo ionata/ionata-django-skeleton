@@ -11,8 +11,7 @@ from rest_framework.routers import DefaultRouter  # type: ignore
 from rest_framework.viewsets import ViewSetMixin  # type: ignore
 
 # Add viewsets here. The first argument is the name and the URL regex
-routes: List[Tuple[str, ViewSetMixin]] = [
-]  # yapf: disable
+routes: List[Tuple[str, ViewSetMixin]] = []
 
 v1_router = DefaultRouter()
 
@@ -21,9 +20,9 @@ for regex, viewset in routes:
 
 
 api = [
-    path('', include(v1_router.urls)),
-    path('', include(rest_urls)),
-    path('auth/', include(rest_auth_urls)),
-    path('auth/registration/', include(rego)),
-    path('docs/', include_docs_urls(title=settings.APP_NAME, public=False)),
-]  # yapf: disable
+    path("", include(v1_router.urls)),
+    path("", include(rest_urls)),
+    path("auth/", include(rest_auth_urls)),
+    path("auth/registration/", include(rego)),
+    path("docs/", include_docs_urls(title=settings.PROJECT_NAME, public=False)),
+]
