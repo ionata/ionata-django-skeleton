@@ -1,4 +1,4 @@
-""" Replace the existing user class with our own in the admin """
+"""Replace the existing user class with our own in the admin."""
 from django import forms  # type: ignore
 from django.contrib import admin  # type: ignore
 from django.contrib.auth import get_user_model  # type: ignore
@@ -9,7 +9,11 @@ from django.utils.translation import ugettext_lazy as _  # type: ignore
 
 
 class UserChangeForm(auth_forms.UserChangeForm):
+    """Form for modifying users in admin."""
+
     class Meta(auth_forms.UserChangeForm.Meta):
+        """Supply the meta parameters."""
+
         model = get_user_model()
         fields = "__all__"
 
@@ -23,10 +27,13 @@ class UserCreationForm(auth_forms.UserCreationForm):
     }
 
     class Meta:
+        """Supply the meta parameters."""
+
         model = get_user_model()
         fields = ["email"]
 
     def clean_password2(self):
+        """Ensure the passwords match."""
         pass1 = self.cleaned_data.get("password1")
         pass2 = self.cleaned_data.get("password2")
         if pass1 and pass2 and pass1 != pass2:
@@ -54,7 +61,7 @@ _add_fieldsets = {"classes": ["wide"], "fields": ["email", "password1", "passwor
 
 @admin.register(get_user_model())
 class UserAdmin(auth_admin.UserAdmin):
-    """ The admin interface for the user model """
+    """The admin interface for the user model."""
 
     form = UserChangeForm
     add_form = UserCreationForm

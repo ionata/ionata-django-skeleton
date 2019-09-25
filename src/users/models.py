@@ -1,3 +1,4 @@
+"""User models."""
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.mail import send_mail
 from django.db import models
@@ -8,12 +9,7 @@ from .managers import UserManager
 
 
 class AbstractUser(AbstractBaseUser, PermissionsMixin):
-    """
-    An abstract base class implementing a fully featured User model with
-    admin-compliant permissions.
-
-    Email and password are required. Other fields are optional.
-    """
+    """Email and password are required. Other fields are optional."""
 
     email = models.EmailField(_("email address"), unique=True)
     is_staff = models.BooleanField(
@@ -33,30 +29,30 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS: list = []
 
     objects = UserManager()
 
     class Meta:
+        """Model meta options."""
+
         verbose_name = _("user")
         verbose_name_plural = _("users")
-        abstract = True
+        swappable = "AUTH_USER_MODEL"
+
+    class JSONAPIMeta:
+        """JSONAPI class name."""
+
+        resource_name = "users"
 
     def get_full_name(self):
+        """Just return the email (this method is required)."""
         return self.email
 
     def get_short_name(self):
+        """Just return the email (this method is required)."""
         return self.email
 
     def email_user(self, subject, message, from_email=None, **kwargs):
-        """
-        Sends an email to this User
-        """
+        """Send an email to this User."""
         send_mail(subject, message, from_email, [self.email], **kwargs)
-
-
-class User(AbstractUser):
-    """Email and password are required. Other fields are optional."""
-
-    class Meta(AbstractUser.Meta):
-        swappable = "AUTH_USER_MODEL"
