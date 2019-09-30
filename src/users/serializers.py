@@ -1,3 +1,4 @@
+"""Serializers for users app."""
 # pylint: disable=abstract-method
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_encode as b64e
@@ -18,6 +19,8 @@ class UserDetailsSerializer(ModelSerializer):
     """Simple user details serializer."""
 
     class Meta:
+        """Serializer Meta information."""
+
         model = _user
         read_only_fields = fields = USER_FIELDS
 
@@ -26,6 +29,7 @@ class RegisterSerializer(rego_serializers.RegisterSerializer):
     """Signup serializer that removes case."""
 
     def validate_email(self, email):  # pylint: disable=no-self-use
+        """Casefold the email address before validation."""
         return super().validate_email(email.casefold())
 
 
@@ -33,6 +37,7 @@ class LoginSerializer(auth_serializers.LoginSerializer):
     """Login serializer that removes case."""
 
     def validate_email(self, value):  # pylint: disable=no-self-use
+        """Login serializer that removes case."""
         return value.casefold()
 
 
@@ -40,10 +45,12 @@ class PasswordResetSerializer(auth_serializers.PasswordResetSerializer):
     """Password reset serializer that removes case."""
 
     def get_email_context(self):
+        """Casefold the email address before encoding it."""
         email = self.data["email"].casefold().encode("utf-8")
         return {"email_encoded": b64e(email)}
 
     def get_email_options(self):  # pylint: disable=no-self-use
+        """Update email options."""
         return {
             **super().get_email_options(),
             **RESET_TEMPLATES,
@@ -51,4 +58,5 @@ class PasswordResetSerializer(auth_serializers.PasswordResetSerializer):
         }
 
     def validate_email(self, value):  # pylint: disable=no-self-use
+        """Casefold the email address before validation."""
         return super().validate_email(value.casefold())

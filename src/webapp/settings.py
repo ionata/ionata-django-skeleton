@@ -202,12 +202,12 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_REGISTRATION = "enabled"
 REST_AUTH_SERIALIZERS = {
-    "USER_DETAILS_SERIALIZER": "users.drf.serializers.UserDetailsSerializer",
-    "PASSWORD_RESET_SERIALIZER": "users.drf.serializers.PasswordResetSerializer",
-    "LOGIN_SERIALIZER": "users.drf.serializers.LoginSerializer",
+    "USER_DETAILS_SERIALIZER": "users.serializers.UserDetailsSerializer",
+    "PASSWORD_RESET_SERIALIZER": "users.serializers.PasswordResetSerializer",
+    "LOGIN_SERIALIZER": "users.serializers.LoginSerializer",
 }
 REST_AUTH_REGISTER_SERIALIZERS = {
-    "REGISTER_SERIALIZER": "users.drf.serializers.RegisterSerializer"
+    "REGISTER_SERIALIZER": "users.serializers.RegisterSerializer"
 }
 
 if DEBUG:
