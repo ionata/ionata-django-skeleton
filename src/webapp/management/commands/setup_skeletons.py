@@ -1,3 +1,4 @@
+"""Management Command to setup initial data."""
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -39,6 +40,7 @@ def get_site():
 
 
 def schedule_check():
+    """Schedule celery heartbeat task."""
     interval = IntervalSchedule.objects.get_or_create(every=10, period="minutes")[0]
     PeriodicTask.objects.get_or_create(
         name="send_beat", task="webapp.tasks.send_beat", interval=interval
@@ -46,7 +48,10 @@ def schedule_check():
 
 
 class Command(BaseCommand):
+    """Management command to setup initial data."""
+
     def handle(self, *args, **options):
+        """Run the management command."""
         print(f"Running setup for {settings.PROJECT_NAME}")
         get_admin()
         get_site()
