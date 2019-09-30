@@ -1,14 +1,16 @@
 """User models."""
+from typing import List
+
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from .managers import UserManager
+from users.managers import UserManager
 
 
-class AbstractUser(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
     """Email and password are required. Other fields are optional."""
 
     email = models.EmailField(_("email address"), unique=True)
@@ -29,7 +31,7 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = "email"
     EMAIL_FIELD = "email"
-    REQUIRED_FIELDS: list = []
+    REQUIRED_FIELDS: List[str] = []
 
     objects = UserManager()
 
@@ -46,11 +48,11 @@ class AbstractUser(AbstractBaseUser, PermissionsMixin):
         resource_name = "users"
 
     def get_full_name(self):
-        """Just return the email (this method is required)."""
+        """Return the email (this method is required)."""
         return self.email
 
     def get_short_name(self):
-        """Just return the email (this method is required)."""
+        """Return the email (this method is required)."""
         return self.email
 
     def email_user(self, subject, message, from_email=None, **kwargs):
