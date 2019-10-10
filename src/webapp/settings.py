@@ -48,6 +48,8 @@ HEARTBEAT_SERVER: Optional[str] = "https://heartbeat.ionata.com.au"
 
 # Services
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
+# This needs to be set to something unique per site so that the different
+# celery instances data is namespaced on the shared broker (probably redis)
 CELERY_TASK_DEFAULT_QUEUE = env.str("CELERY_TASK_DEFAULT_QUEUE")
 DATABASES = {"default": env.db_url(default=default_databse_url)}
 
