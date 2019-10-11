@@ -37,7 +37,7 @@ If you don't have access, it's basically:
     - `ADMIN_USER` - this is a development only setting
     - `AWS_S3_SECURE_URLS` - set to false if not using https during development
   - For production:
-    - `DEBUG` (set it to false)
+    - `DEBUG` - set it to false
     - `SECRET_KEY`
     - `SITE_URL`
     - `DEFAULT_FROM_EMAIL`
@@ -45,10 +45,9 @@ If you don't have access, it's basically:
     - `DATABASE_URL`
     - `CELERY_BROKER_URL`
     - `MAILGUN_API_KEY`
-    - `API_ROOT`
-    - `PUBLIC_PATH`
-* **Important note:** Docker reads `.env` files poorly. You will need to remove the
-  double quotes from around the values being assigned. For example,
+    - `CELERY_TASK_DEFAULT_QUEUE`
+* **Important note:** Docker Compose reads `.env` files poorly. You will need to
+  remove the double quotes from around the values being assigned. For example,
   - replace: `DJANGO_SETTINGS_MODULE="webapp.settings"`
   - with: `DJANGO_SETTINGS_MODULE=webapp.settings`
 
