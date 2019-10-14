@@ -1,6 +1,6 @@
-version: '3'
-volumes: {home:, db:, minio1:, minio2:, redis:, npm:, venv:}
-networks: {default:}
+version: "3"
+volumes: { home, db, minio1, minio2, redis, npm, venv }
+networks: { default }
 services:
   db:
     environment: ["POSTGRES_USER=django", "POSTGRES_PASSWORD=django"]
@@ -16,7 +16,7 @@ services:
     environment: ["MINIO_ACCESS_KEY=djangos3", "MINIO_SECRET_KEY=djangos3"]
     image: "minio/minio"
     volumes: ["minio1:/export", "minio2:/root/.config"]
-    networks: {default: {aliases: ["minio", "min.io"]}}
+    networks: { default: { aliases: ["minio", "min.io"] } }
     ports: ["9000:9000"]
   backend: &backend
     image: "ionata/django-backend"
