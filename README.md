@@ -15,16 +15,16 @@ Docker image for the backend is from https://gitlab.com/ionata/django-images
 
 If you don't have access, it's basically:
 
-* ubuntu 16.04
-* install build tools:  
+* Ubuntu 16.04
+* Install build tools:  
   `build-essential`, `g++-5`, `gettext`, `git`, `libjpeg-dev`, `locales`, `zlib1g-dev`
-* install postgis requirements  
+* Install postgis requirements  
   `binutils`, `gdal-bin`, `libpq-dev`, `libproj-dev`, `libgeos-dev`, `postgis`, `postgresql-client`
-* install mssql requirements  
+* Install mssql requirements  
   `msodbcsql`, `mssql-tools`, `unixodbc-dev`
-* install wkhtmltopdf+libfontconfig
-* install python3.7+poetry
-* install nginx
+* Install wkhtmltopdf+libfontconfig
+* Install python3.7+poetry
+* Install nginx
 
 
 ## Dotenv
@@ -46,6 +46,9 @@ If you don't have access, it's basically:
     - `CELERY_BROKER_URL`
     - `MAILGUN_API_KEY`
     - `CELERY_TASK_DEFAULT_QUEUE`
+    - `AXES_REDIS_URL`
+    - `AXES_KEY_PREFIX`
+    - `AXES_META_PRECEDENCE_ORDER`
 * **Important note:** Docker Compose reads `.env` files poorly. You will need to
   remove the double quotes from around the values being assigned. For example,
   - replace: `DJANGO_SETTINGS_MODULE="webapp.settings"`

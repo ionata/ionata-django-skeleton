@@ -1,0 +1,5 @@
+{% autoescape off %}Login attempts were blocked for the ip address: {{ ip_address }}, at {{ time }}
+
+Kind regards,
+
+{{ project_name }}{% endautoescape %}

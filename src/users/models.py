@@ -43,7 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         swappable = "AUTH_USER_MODEL"
 
     class JSONAPIMeta:
-        """JSONAPI class name."""
+        """JSONAPI meta information."""
 
         resource_name = "users"
 

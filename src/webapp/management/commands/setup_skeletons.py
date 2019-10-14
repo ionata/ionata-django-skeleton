@@ -1,9 +1,9 @@
 """Management Command to setup initial data."""
 from urllib.parse import urlparse
+from enum import Enum
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
@@ -31,14 +31,6 @@ def get_admin():
     return user
 
 
-def get_site():
-    """Return the default site, creating it if not present."""
-    url = urlparse(settings.SITE_URL)
-    defaults = {"name": settings.PROJECT_NAME, "domain": url.hostname}
-    kwargs = {"pk": settings.SITE_ID, "defaults": defaults}
-    return Site.objects.get_or_create(**kwargs)[0]
-
-
 def schedule_check():
     """Schedule celery heartbeat task."""
     interval = IntervalSchedule.objects.get_or_create(every=10, period="minutes")[0]
@@ -47,12 +39,54 @@ def schedule_check():
     )
 
 
+class Verbosity(Enum):
+    """Verbosity enum."""
+
+    minimal = 0
+    normal = 1
+    verbose = 2
+    very_verbose = 3
+
+    def __ge__(self, other):
+        """Return true if this instance is greater than or equal to other."""
+        if self.__class__ is other.__class__:
+            return self.value >= other.value  # pylint: disable=comparison-with-callable
+        return NotImplemented
+
+    def __gt__(self, other):
+        """Return true if this instance is greater than other."""
+        if self.__class__ is other.__class__:
+            return self.value > other.value  # pylint: disable=comparison-with-callable
+        return NotImplemented
+
+    def __le__(self, other):
+        """Return true if this instance is less than or equal to other."""
+        if self.__class__ is other.__class__:
+            return self.value <= other.value  # pylint: disable=comparison-with-callable
+        return NotImplemented
+
+    def __lt__(self, other):
+        """Return true if this instance is less than other."""
+        if self.__class__ is other.__class__:
+            return self.value < other.value  # pylint: disable=comparison-with-callable
+        return NotImplemented
+
+
 class Command(BaseCommand):
     """Management command to setup initial data."""
 
+    def __init__(self, *args, **kwargs):
+        """Set default verbosity."""
+        super().__init__(*args, **kwargs)
+        self.verbosity: Verbosity
+
+    def _log(self, message, level=Verbosity.normal):
+        if self.verbosity >= level:
+            print(message)
+
     def handle(self, *args, **options):
         """Run the management command."""
-        print(f"Running setup for {settings.PROJECT_NAME}")
+        self.verbosity = Verbosity(options["verbosity"])
+        self._log(f"Running setup for {settings.PROJECT_NAME}")
         get_admin()
-        get_site()
         schedule_check()

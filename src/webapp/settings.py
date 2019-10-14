@@ -1,4 +1,5 @@
 """Settings for your application."""
+from datetime import timedelta
 from typing import Any, List, Optional, Tuple, Type, Dict
 from urllib.parse import urlparse
 
@@ -11,7 +12,10 @@ DEBUG = env.bool("DEBUG")
 
 default_databse_url = env.NOTSET
 
-scheme: Dict[str, Tuple[Type, Any]] = {"CELERY_BROKER_URL": (str, "redis://")}
+scheme: Dict[str, Tuple[Type, Any]] = {
+    "CELERY_BROKER_URL": (str, "redis://"),
+    "AXES_META_PRECEDENCE_ORDER": (tuple, ("HTTP_X_FORWARDED_FOR", "X_FORWARDED_FOR")),
+}
 
 if DEBUG:
     default_databse_url = "postgres://django:django@db:5432/django"
@@ -25,6 +29,7 @@ if DEBUG:
             "AWS_S3_SECURE_URLS": (bool, True),
             "MAILGUN_API_KEY": (str, ""),
             "CELERY_TASK_DEFAULT_QUEUE": (str, "celery"),
+            "AXES_KEY_PREFIX": (str, "axes"),
         },
     }
 
@@ -35,6 +40,9 @@ env = Env(**scheme)
 PROJECT_NAME: str = "<INSERT_PROJECT_NAME_HERE>"
 SECRET_KEY: str = env("SECRET_KEY")
 SITE_URL: str = env("SITE_URL")
+# NOTE: We do not use the axes middleware because we want login attempts to
+# silently fail. Thus we silence `axes.W002` (invlaid MIDDLEWARE configuration).
+SILENCED_SYSTEM_CHECKS = ["axes.W002"]
 
 url = urlparse(SITE_URL)
 
@@ -48,7 +56,7 @@ HEARTBEAT_SERVER: Optional[str] = "https://heartbeat.ionata.com.au"
 
 # Services
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
-# This needs to be set to something unique per site so that the different
+# NOTE: This needs to be set to something unique per site so that the different
 # celery instances data is namespaced on the shared broker (probably redis)
 CELERY_TASK_DEFAULT_QUEUE = env.str("CELERY_TASK_DEFAULT_QUEUE")
 DATABASES = {"default": env.db_url(default=default_databse_url)}
@@ -78,7 +86,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django.contrib.sites",
+    "axes",
 ]
 
 MIDDLEWARE = [
@@ -113,7 +121,6 @@ TEMPLATES = [
 
 ROOT_URLCONF = "webapp.urls"
 WSGI_APPLICATION = "webapp.wsgi.application"
-SITE_ID = 1
 
 # i18n
 LANGUAGE_CODE = "en-AU"
@@ -124,7 +131,10 @@ USE_TZ = True
 
 # Auth
 ANONYMOUS_USER_ID = -1
-AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
 AUTH_USER_MODEL = "users.User"
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -167,6 +177,38 @@ MAILGUN_API_KEY = env("MAILGUN_API_KEY")
 # Misc
 FRONTEND_URL = SITE_URL
 
+# Django-axes
+AXES_HANDLER = "axes.handlers.cache.AxesCacheHandler"
+AXES_CACHE = "axes"
+AXES_ENABLE_ADMIN = False
+AXES_FAILURE_LIMIT = 10
+AXES_COOLOFF_TIME = timedelta(hours=1)
+# NOTE: This value should be set in the env to use HTTP_X_FORWARDED_FOR in most
+# cases since most projects will be behind a reverse proxy.
+# WARNING: *DO NOT* put HTTP_X_FORWARDED_FOR in the variable if this project is
+# not hosted behind a reverse proxy, as the HTTP_X_FORWARDED_FOR header can
+# be spoofed.
+env_axes_meta_precedence_order = env("AXES_META_PRECEDENCE_ORDER")
+if env_axes_meta_precedence_order is not None:
+    AXES_META_PRECEDENCE_ORDER = env_axes_meta_precedence_order
+    remote_addr = "REMOTE_ADDR"
+    if remote_addr not in AXES_META_PRECEDENCE_ORDER:
+        AXES_META_PRECEDENCE_ORDER += (remote_addr,)
+
+
+# Caches
+axes_cache_config = {"OPTIONS": {}, **env.cache_url("AXES_REDIS_URL")}
+# NOTE: This needs to be set to something unique per site so that the different
+# instances django-axes data is namespaced in the shared cache (probably redis)
+axes_cache_config["KEY_PREFIX"] = env("AXES_KEY_PREFIX")
+axes_cache_config["OPTIONS"][
+    "SERIALIZER"
+] = "django_redis.serializers.json.JSONSerializer"
+CACHES = {
+    "default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"},
+    AXES_CACHE: axes_cache_config,
+}
+
 # DRF Core
 LOGIN_URL = "/backend/api/v1/login/"
 LOGIN_REDIRECT_URL = "/backend/api/v1/"
@@ -175,9 +217,6 @@ INSTALLED_APPS += [
     "rest_framework.authtoken",
     "rest_auth",
     "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "rest_auth.registration",
     "django_filters",
 ]
 REST_FRAMEWORK = {
@@ -189,9 +228,27 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
     ],
-    "DEFAULT_FILTER_BACKENDS": [
-        "rest_framework_filters.backends.RestFrameworkFilterBackend"
+    "EXCEPTION_HANDLER": "rest_framework_json_api.exceptions.exception_handler",
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework_json_api.parsers.JSONParser",
+        "rest_framework.parsers.FormParser",
+        "rest_framework.parsers.MultiPartParser",
     ],
+    "DEFAULT_RENDERER_CLASSES": ["rest_framework_json_api.renderers.JSONRenderer"],
+    "DEFAULT_METADATA_CLASS": "rest_framework_json_api.metadata.JSONAPIMetadata",
+    "DEFAULT_FILTER_BACKENDS": [
+        "rest_framework_json_api.filters.QueryParameterValidationFilter",
+        "rest_framework_json_api.filters.OrderingFilter",
+        "rest_framework_json_api.django_filters.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+    ],
+    "SEARCH_PARAM": "filter[search]",
+    "TEST_REQUEST_RENDERER_CLASSES": [
+        "rest_framework_json_api.renderers.JSONRenderer",
+        "rest_framework.renderers.MultiPartRenderer",
+        "rest_framework.renderers.JSONRenderer",
+    ],
+    "TEST_REQUEST_DEFAULT_FORMAT": "vnd.api+json",
 }
 
 # DRF Auth
@@ -200,19 +257,16 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_REGISTRATION = "enabled"
 REST_AUTH_SERIALIZERS = {
-    "USER_DETAILS_SERIALIZER": "users.serializers.UserDetailsSerializer",
     "PASSWORD_RESET_SERIALIZER": "users.serializers.PasswordResetSerializer",
+    "PASSWORD_RESET_CONFIRM_SERIALIZER": "users.serializers.PasswordResetConfirmSerializer",
     "LOGIN_SERIALIZER": "users.serializers.LoginSerializer",
-}
-REST_AUTH_REGISTER_SERIALIZERS = {
-    "REGISTER_SERIALIZER": "users.serializers.RegisterSerializer"
+    "TOKEN_SERIALIZER": "users.serializers.TokenSerializer",
 }
 
 if DEBUG:
     ALLOWED_HOSTS = ["*"]
-    ADMINS = []
+    ADMINS = [("Debug Admin", "debug-admin@example.com")]
     MANAGERS = ADMINS
 
     # Storage

@@ -1,3 +1,4 @@
+"""Root url config."""
 from django.apps import apps  # type: ignore
 from django.conf import settings  # type: ignore
 from django.contrib import admin  # type: ignore
@@ -16,7 +17,7 @@ def _static_urls() -> list:
 
 def _djdt_urls() -> list:
     if apps.is_installed("debug_toolbar"):
-        import debug_toolbar  # type: ignore
+        import debug_toolbar  # pylint: disable=import-outside-toplevel
 
         return debug_toolbar.urls
     return []

@@ -1,0 +1,16 @@
+{% extends "base_email.html" %}
+
+
+{% block content %}{% autoescape off %}
+<p>
+  Login attempts were blocked for the ip address:
+  <pre>{{ ip_address }}</pre>
+  at:
+  <pre>{{ time }}</pre>
+</p>
+
+<p>
+  Kind regards,<br><br>
+  {{ project_name }}
+</p>
+{% endautoescape %}{% endblock content %}
