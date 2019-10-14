@@ -1,5 +1,4 @@
 """Management Command to setup initial data."""
-from urllib.parse import urlparse
 from enum import Enum
 
 from django.conf import settings
