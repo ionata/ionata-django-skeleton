@@ -52,7 +52,7 @@ class EndpointTestCase(test.APITestCase):
         self.current_token = user
         self.client.force_authenticate(user, token)  # pylint: disable=no-member
 
-    def give_user_perm(self, user: User, perm):
+    def give_user_perm(self, user: User, perm):  # pylint: disable=no-self-use
         """Assign the given permission to the user."""
         app_label, codename = perm.split(".")
         user.user_permissions.add(
@@ -62,7 +62,7 @@ class EndpointTestCase(test.APITestCase):
         )
         user.save()
 
-    def give_user_group(self, user, group_name: str):
+    def give_user_group(self, user, group_name: str):  # pylint: disable=no-self-use
         """Assign the group with the given group_name to the user."""
         user.groups.add(Group.objects.get(name=group_name))
 
