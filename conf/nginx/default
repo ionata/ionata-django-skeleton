@@ -20,8 +20,6 @@ server {
   proxy_set_header Host $http_host;
   add_header Cache-Control no-cache;
 
-  # Redundant API location because IE11 fetch sends cookies
-  location /api/ { proxy_pass http://gunicorn/backend/api/; }
   location /backend/ { proxy_pass http://gunicorn/backend/; }
 }
 
