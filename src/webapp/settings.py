@@ -1,6 +1,6 @@
 """Settings for your application."""
 from datetime import timedelta
-from typing import Any, List, Optional, Tuple, Type, Dict
+from typing import Any, Dict, List, Optional, Tuple, Type
 from urllib.parse import urlparse
 
 from environ import Env

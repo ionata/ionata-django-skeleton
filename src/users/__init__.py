@@ -1,2 +1,2 @@
 """Register our app config explicitly."""
-default_app_config = 'users.apps.UserConfig'
+default_app_config = "users.apps.UserConfig"

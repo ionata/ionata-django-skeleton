@@ -1,10 +1,10 @@
 """Replace the existing user class with our own in the admin."""
 from django import forms  # type: ignore
 from django.contrib import admin  # type: ignore
-from django.contrib.auth import get_user_model  # type: ignore
-from django.contrib.auth import password_validation  # type: ignore
 from django.contrib.auth import admin as auth_admin  # type: ignore
 from django.contrib.auth import forms as auth_forms  # type: ignore
+from django.contrib.auth import get_user_model  # type: ignore
+from django.contrib.auth import password_validation  # type: ignore
 from django.utils.translation import ugettext_lazy as _  # type: ignore
 
 
