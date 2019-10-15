@@ -34,7 +34,7 @@ services:
       - "./pyproject.toml:/var/www/pyproject.toml"
       - "./poetry.lock:/var/www/poetry.lock"
       - "./src:/var/www/src"
-      - "./conf:/var/wwww/conf"
+      - "./conf:/var/www/conf"
   celery:
     <<: *backend
     command: "poetry run celery worker -A webapp -l info -B --scheduler django_celery_beat.schedulers:DatabaseScheduler"
