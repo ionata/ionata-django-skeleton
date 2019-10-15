@@ -58,26 +58,14 @@ If you don't have access, it's basically:
 ## Getting the project running for development
 * Ensure you have Docker, docker-compose, and the above Docker image on your system.
 * See the Dotenv section above and follow the steps
-* From within the project start up a shell inside the backend container:
-  - `docker-compose run --rm backend /bin/bash`
-* While in the backend container from within `/var/www/` create the venv:
-  - `python3.7 -mvenv .venv`
-* Activate the venv:
-  - `source /var/www/venv/bin/activate`
-* Install the project requirements:
-  - `poetry install`
-* Run collectstatic:
-  - `poetry run python /var/www/src/manage.py collectstatic --no-input`
-* Migrate the database:
-  - `poetry run python /var/www/src/manage.py migrate`
-* Run setup_skeletons management command:
-  - `poetry run python /var/www/src/manage.py setup_skeletons`
-* Exit the backend Docker container:
-  - `exit`
+* From within the project run make within the backend container:
+  - `docker-compose run --rm backend make install`
 * Start the Docker containers
   - `docker-compose up -d`
-* Log into minio in the browser by visiting `localhost:8000/minio`
-  - username: `djangos3`
-  - password: `djangos3`
-* Click on the overflow menu (the three dots) next to the bucket called `django`
-* Select `Edit policy` and add a policy (either `Read Only` or `Read and Write`)
+
+
+## Development
+* Be sure to maintain and regularly run the tests within the project.
+  - `docker-compose run --rm backend make test`
+* Be sure to format all code before committing.
+  - `docker-compose run --rm backend make format`
