@@ -1,11 +1,14 @@
 """Management Command to setup initial data."""
+import argparse
 from enum import Enum
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.files.storage import default_storage
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from django_celery_beat.models import IntervalSchedule, PeriodicTask
+from storages.backends.s3boto3 import S3Boto3Storage
 
 
 def get_admin():
@@ -36,6 +39,14 @@ def schedule_check():
     PeriodicTask.objects.get_or_create(
         name="send_beat", task="webapp.tasks.send_beat", interval=interval
     )
+
+
+def create_bucket_policy(fyl):
+    """Create a bucket policy."""
+    if not isinstance(default_storage, S3Boto3Storage):
+        return
+    policy = fyl.read()
+    default_storage.bucket.Policy().put(Policy=policy)
 
 
 class Verbosity(Enum):
@@ -83,9 +94,34 @@ class Command(BaseCommand):
         if self.verbosity >= level:
             print(message)
 
+    def add_arguments(self, parser):
+        """Add bucket-policy argument."""
+        default_path = "/var/www/conf/docker/bucket_policy.json"
+        parser.add_argument(
+            "--bucket-policy",
+            type=argparse.FileType("r"),
+            default=default_path,
+            help=(
+                "The path to the json file that should be used to create "
+                "the bucket policy. (Only available when settings.DEBUG "
+                f"is True and using minio.) Default: {default_path}"
+            ),
+        )
+
     def handle(self, *args, **options):
         """Run the management command."""
         self.verbosity = Verbosity(options["verbosity"])
         self._log(f"Running setup for {settings.PROJECT_NAME}")
+        bucket_policy = options["bucket_policy"]
         get_admin()
         schedule_check()
+        is_minio = "minio" in getattr(settings, "AWS_S3_ENDPOINT_URL", "")
+        if settings.DEBUG and is_minio:
+            create_bucket_policy(bucket_policy)
+        elif not settings.DEBUG:
+            self._log(f"Skipping creating bucket policy since settings.DEBUG is False")
+        elif not is_minio:
+            self._log(
+                "Skipping creating bucket policy since "
+                'settings.AWS_S3_ENDPOINT_URL does not contain "minio"'
+            )
