@@ -2,25 +2,32 @@
 # pylint: disable=invalid-name
 from __future__ import annotations
 
+from hamcrest import instance_of
 from rest_framework import status
 
 from users.models import User
-from webapp.base_test_case import EndpointTestCase
+from webapp.tests.base import JsonApiTestCase
+from webapp.tests.matchers import is_to_one
 
 
-class UsersTestCase(EndpointTestCase):
+class UsersTestCase(JsonApiTestCase):
     """Test validation on users endpoint."""
 
     resource_name: str = "users"
+    attributes = {"email": instance_of(str)}
+    relationships = {}
 
     def test_can_create_user(self):
         """Test can create users."""
         email = "test@example.com"
         password = "hellopass123"
-        data = self.get_data(email=email, password=password)
-        response = self.client.post(f"/{self.resource_name}/", data=data)
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        data = {"data": self.get_data(email=email, password=password)}
+        response = self.post(
+            f"/{self.resource_name}/",
+            data=data,
+            asserted_status=status.HTTP_201_CREATED,
+            asserted_schema=self.get_schema(),
+        )
         json = response.json()
         # check email is correct
         self.assertEqual(json["data"]["attributes"]["email"], email)
@@ -36,11 +43,13 @@ class UsersTestCase(EndpointTestCase):
         self.auth(user)
         email = "test@example.com"
         password = "hellopass123"
-        data = self.get_data(email=email, password=password)
-        response = self.client.post(f"/{self.resource_name}/", data=data)
+        data = {"data": self.get_data(email=email, password=password)}
+        response = self.post(
+            f"/{self.resource_name}/",
+            data=data,
+            asserted_status=status.HTTP_403_FORBIDDEN,
+        )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         # check email is correct
         self.assertHasError(json, "data", "You cannot create users.")
 
@@ -58,10 +67,11 @@ class UsersTestCase(EndpointTestCase):
             email="other@example.com", password="pass"
         )
         self.auth(user)
-        response = self.client.get(f"/{self.resource_name}/{other_user.pk}/")
+        response = self.get(
+            f"/{self.resource_name}/{other_user.pk}/",
+            asserted_status=status.HTTP_404_NOT_FOUND,
+        )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         # check has correct error
         self.assertHasError(json, "detail", "Not found.")
 
@@ -73,10 +83,12 @@ class UsersTestCase(EndpointTestCase):
         )
         self.give_user_perm(user, "users.view_user")
         self.auth(user)
-        response = self.client.get(f"/{self.resource_name}/{other_user.pk}/")
+        response = self.get(
+            f"/{self.resource_name}/{other_user.pk}/",
+            asserted_status=status.HTTP_200_OK,
+            asserted_schema=self.get_schema(),
+        )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         # check parameters are correct
         self.assertEqual(json["data"]["id"], str(other_user.pk))
         self.assertEqual(json["data"]["attributes"]["email"], other_user.email)
@@ -89,15 +101,17 @@ class UsersTestCase(EndpointTestCase):
             email="other@example.com", password=password
         )
         self.auth(user)
-        data = self.get_data(
-            id=other_user.id, current_password=password, password="hellopass123"
-        )
-        response = self.client.patch(
-            f"/{self.resource_name}/{other_user.pk}/", data=data
+        data = {
+            "data": self.get_data(
+                id=other_user.id, current_password=password, password="hellopass123"
+            )
+        }
+        response = self.patch(
+            f"/{self.resource_name}/{other_user.pk}/",
+            data=data,
+            asserted_status=status.HTTP_404_NOT_FOUND,
         )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         # check has correct error
         self.assertHasError(json, "detail", "Not found.")
 
@@ -107,12 +121,17 @@ class UsersTestCase(EndpointTestCase):
         new_password = "hellopass123"
         user = User.objects.create_user(email="user@example.com", password=password)
         self.auth(user)
-        data = self.get_data(
-            id=user.id, current_password=password, password=new_password
+        data = {
+            "data": self.get_data(
+                id=user.id, current_password=password, password=new_password
+            )
+        }
+        self.patch(
+            f"/{self.resource_name}/{user.pk}/",
+            data=data,
+            asserted_status=status.HTTP_200_OK,
+            asserted_schema=self.get_schema(),
         )
-        response = self.client.patch(f"/{self.resource_name}/{user.pk}/", data=data)
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         # check password was successfully updated
         user.refresh_from_db()
         self.assertTrue(user.check_password(new_password))
@@ -123,11 +142,13 @@ class UsersTestCase(EndpointTestCase):
         new_password = "hellopass123"
         user = User.objects.create_user(email="user@example.com", password=password)
         self.auth(user)
-        data = self.get_data(id=user.id, password=new_password)
-        response = self.client.patch(f"/{self.resource_name}/{user.pk}/", data=data)
+        data = {"data": self.get_data(id=user.id, password=new_password)}
+        response = self.patch(
+            f"/{self.resource_name}/{user.pk}/",
+            data=data,
+            asserted_status=status.HTTP_400_BAD_REQUEST,
+        )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # check has correct error
         self.assertHasError(
             json,
@@ -141,13 +162,17 @@ class UsersTestCase(EndpointTestCase):
         new_password = "hellopass123"
         user = User.objects.create_user(email="user@example.com", password=password)
         self.auth(user)
-        data = self.get_data(
-            id=user.id, current_password="wrong pass", password=new_password
+        data = {
+            "data": self.get_data(
+                id=user.id, current_password="wrong pass", password=new_password
+            )
+        }
+        response = self.patch(
+            f"/{self.resource_name}/{user.pk}/",
+            data=data,
+            asserted_status=status.HTTP_400_BAD_REQUEST,
         )
-        response = self.client.patch(f"/{self.resource_name}/{user.pk}/", data=data)
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # check has correct error
         self.assertHasError(
             json, "current_password", "Your current password is incorrect."
@@ -158,10 +183,12 @@ class UsersTestCase(EndpointTestCase):
         password = "pass"
         user = User.objects.create_user(email="user@example.com", password=password)
         self.auth(user)
-        response = self.client.get(f"/{self.resource_name}/{user.pk}/")
+        response = self.get(
+            f"/{self.resource_name}/{user.pk}/",
+            asserted_status=status.HTTP_200_OK,
+            asserted_schema=self.get_schema(),
+        )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         # check parameters are correct
         self.assertEqual(json["data"]["id"], str(user.pk))
         self.assertEqual(json["data"]["attributes"]["email"], user.email)
@@ -176,15 +203,18 @@ class UsersTestCase(EndpointTestCase):
         )
         self.give_user_perm(user, "users.change_user")
         self.auth(user)
-        data = self.get_data(
-            id=other_user.id, current_password=password, password=new_password
-        )
-        response = self.client.patch(
-            f"/{self.resource_name}/{other_user.pk}/", data=data
+        data = {
+            "data": self.get_data(
+                id=other_user.id, current_password=password, password=new_password
+            )
+        }
+        response = self.patch(
+            f"/{self.resource_name}/{other_user.pk}/",
+            data=data,
+            asserted_status=status.HTTP_200_OK,
+            asserted_schema=self.get_schema(),
         )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         # check parameters are correct
         self.assertEqual(json["data"]["id"], str(other_user.pk))
         self.assertEqual(json["data"]["attributes"]["email"], other_user.email)
@@ -195,10 +225,11 @@ class UsersTestCase(EndpointTestCase):
     def test_unauthenticated_user_cannot_delete(self):
         """Test unauthenticated user cannot delete."""
         user = User.objects.create_user(email="user@example.com", password="pass")
-        response = self.client.delete(f"/{self.resource_name}/{user.pk}/")
+        response = self.delete(
+            f"/{self.resource_name}/{user.pk}/",
+            asserted_status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
         # check has correct error
         self.assertHasError(json, "data", 'Method "DELETE" not allowed.')
 
@@ -207,10 +238,11 @@ class UsersTestCase(EndpointTestCase):
         user = User.objects.create_user(email="test@example.com", password="pass")
         self.give_user_perm(user, "users.delete_user")
         self.auth(user)
-        response = self.client.delete(f"/{self.resource_name}/{user.pk}/")
+        response = self.delete(
+            f"/{self.resource_name}/{user.pk}/",
+            asserted_status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
         # check has correct error
         self.assertHasError(json, "data", 'Method "DELETE" not allowed.')
 
@@ -228,22 +260,26 @@ class UsersTestCase(EndpointTestCase):
         self.test_unauthenticated_user_cannot_delete()
 
 
-class SessionsTestCase(EndpointTestCase):
+class SessionsTestCase(JsonApiTestCase):
     """Test validation on sessions endpoint."""
 
-    to_ones = ["user"]
     resource_name: str = "sessions"
+    attributes = {"token": instance_of(str)}
+    relationships = {"user": is_to_one(resource_name="users")}
 
     def test_can_create_session(self):
         """Test user can create session."""
         email = "test@example.com"
         password = "hellopass123"
         user = User.objects.create_user(email=email, password=password)
-        data = self.get_data(email=email, password=password)
-        response = self.client.post(f"/{self.resource_name}/", data=data)
+        data = {"data": self.get_data(email=email, password=password)}
+        response = self.post(
+            f"/{self.resource_name}/",
+            data=data,
+            asserted_status=status.HTTP_201_CREATED,
+            asserted_schema=self.get_schema(),
+        )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         # check parameters are correct
         self.assertIn("token", json["data"]["attributes"])
         self.assertDictEqual(
@@ -256,10 +292,12 @@ class SessionsTestCase(EndpointTestCase):
         password = "hellopass123"
         user = User.objects.create_user(email=email, password=password)
         self.auth(user)
-        response = self.client.get(f"/{self.resource_name}/")
+        response = self.get(
+            f"/{self.resource_name}/",
+            asserted_status=status.HTTP_200_OK,
+            asserted_schema=self.get_schema(many=True, exclude=["token"]),
+        )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         # check there is one instance in the json
         self.assertEqual(len(json["data"]), 1)
         session = json["data"][0]
@@ -269,10 +307,10 @@ class SessionsTestCase(EndpointTestCase):
 
     def test_unauthenticated_user_cannot_get_session(self):
         """Test unauthenticated user cannot get session."""
-        response = self.client.get(f"/{self.resource_name}/")
+        response = self.get(
+            f"/{self.resource_name}/", asserted_status=status.HTTP_401_UNAUTHORIZED
+        )
         json = response.json()
-        # check correct response code
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         # check has correct error
         self.assertHasError(
             json, "data", "Authentication credentials were not provided."
@@ -283,18 +321,23 @@ class SessionsTestCase(EndpointTestCase):
         email = "user@example.com"
         password = "pass"
         User.objects.create_user(email=email, password=password)
-        data = self.get_data(email=email, password=password)
-        token_json = self.client.post(f"/{self.resource_name}/", data=data).json()
+        data = {"data": self.get_data(email=email, password=password)}
+        token_json = self.post(f"/{self.resource_name}/", data=data).json()
         token = token_json["data"]["attributes"]["token"]
         # check the token is valid
         self.client.credentials(  # pylint: disable=no-member
             HTTP_AUTHORIZATION=f"Token {token}"
         )
-        response = self.client.get(f"/{self.resource_name}/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.get(
+            f"/{self.resource_name}/",
+            asserted_status=status.HTTP_200_OK,
+            asserted_schema=self.get_schema(many=True, exclude=["token"]),
+        )
         # delete the token (logout)
-        response = self.client.delete(f"/{self.resource_name}/")
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.delete(
+            f"/{self.resource_name}/", asserted_status=status.HTTP_204_NO_CONTENT
+        )
         # check the token is no longer valid
-        response = self.client.get(f"/{self.resource_name}/")
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.get(
+            f"/{self.resource_name}/", asserted_status=status.HTTP_401_UNAUTHORIZED
+        )
