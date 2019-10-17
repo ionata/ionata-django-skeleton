@@ -2,12 +2,14 @@
 # pylint: disable=invalid-name
 from __future__ import annotations
 
+from typing import Dict
+
 from hamcrest import instance_of
 from rest_framework import status
 
 from users.models import User
 from webapp.tests.base import JsonApiTestCase
-from webapp.tests.matchers import is_to_one
+from webapp.tests.matchers import IsJsonApiRelationship, is_to_one
 
 
 class UsersTestCase(JsonApiTestCase):
@@ -15,7 +17,7 @@ class UsersTestCase(JsonApiTestCase):
 
     resource_name: str = "users"
     attributes = {"email": instance_of(str)}
-    relationships = {}
+    relationships: Dict[str, IsJsonApiRelationship] = {}
 
     def test_can_create_user(self):
         """Test can create users."""

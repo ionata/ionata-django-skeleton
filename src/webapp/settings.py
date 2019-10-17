@@ -197,7 +197,7 @@ if env_axes_meta_precedence_order is not None:
 
 
 # Caches
-axes_cache_config = {"OPTIONS": {}, **env.cache_url("AXES_REDIS_URL")}
+axes_cache_config: Dict[str, Any] = {"OPTIONS": {}, **env.cache_url("AXES_REDIS_URL")}
 # NOTE: This needs to be set to something unique per site so that the different
 # instances django-axes data is namespaced in the shared cache (probably redis)
 axes_cache_config["KEY_PREFIX"] = env("AXES_KEY_PREFIX")
