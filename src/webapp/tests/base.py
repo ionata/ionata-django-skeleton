@@ -46,7 +46,7 @@ class JsonApiTestCase(test.APITestCase):
     @classmethod
     def get_schema(cls, many=False, exclude: List[str] = None) -> Optional[BaseMatcher]:
         """Override to wrap into JSON:API format."""
-        exclude = exclude or {}
+        exclude = exclude or []
         schema = IsResourceObject(
             resource_name=cls.resource_name,
             attributes={k: v for k, v in cls.attributes.items() if k not in exclude},
