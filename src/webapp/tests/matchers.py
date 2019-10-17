@@ -110,7 +110,7 @@ class IsResourceObject(IsResourceIdentifierObject):
             entries["attributes"] = has_entries(**self.attributes)
         if self.relationships:
             entries["relationships"] = has_entries(**self.relationships)
-        return has_entries(**entries)
+        return all_of(has_entries(**entries), super().matcher)
 
 
 class IsToOne(IsResourceIdentifierObject):
