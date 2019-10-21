@@ -1,9 +1,11 @@
 """Management Command to setup initial data."""
 import argparse
 from enum import Enum
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.sites.models import Site
 from django.core.files.storage import default_storage
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
@@ -31,6 +33,14 @@ def get_admin():
         user.set_password(admin["password"])
         user.save()
     return user
+
+
+def get_site():
+    """Return the default site, creating it if not present."""
+    url = urlparse(settings.SITE_URL)
+    defaults = {"name": settings.PROJECT_NAME, "domain": url.hostname}
+    kwargs = {"pk": settings.SITE_ID, "defaults": defaults}
+    return Site.objects.get_or_create(**kwargs)[0]
 
 
 def schedule_check():
@@ -114,6 +124,7 @@ class Command(BaseCommand):
         self._log(f"Running setup for {settings.PROJECT_NAME}")
         bucket_policy = options["bucket_policy"]
         get_admin()
+        get_site()
         schedule_check()
         is_minio = "minio" in getattr(settings, "AWS_S3_ENDPOINT_URL", "")
         if settings.DEBUG and is_minio:

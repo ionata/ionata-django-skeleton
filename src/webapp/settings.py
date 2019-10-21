@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     "axes",
 ]
 
@@ -121,6 +122,7 @@ TEMPLATES = [
 
 ROOT_URLCONF = "webapp.urls"
 WSGI_APPLICATION = "webapp.wsgi.application"
+SITE_ID = 1
 
 # i18n
 LANGUAGE_CODE = "en-AU"
