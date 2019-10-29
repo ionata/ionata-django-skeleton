@@ -18,7 +18,7 @@ routes: List[Tuple[str, ViewSetMixin]] = [
 v1_router = DefaultRouter()
 
 for regex, viewset in routes:
-    v1_router.register(regex, viewset, base_name=regex)
+    v1_router.register(regex, viewset, basename=regex)
 
 
 api = [path("", include(v1_router.urls))]
