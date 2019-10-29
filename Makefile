@@ -17,4 +17,4 @@ format :
 	$(POETRY_RUN) black $(SRC_FILES)
 
 test :
-	poetry run /var/www/src/manage.py test $(TEST_OPTIONS) $(APPS)
+	poetry run python -Wall /var/www/src/manage.py test $(TEST_OPTIONS) $(APPS)
