@@ -1,5 +1,4 @@
 """Management Command to setup initial data."""
-import argparse
 from enum import Enum
 from urllib.parse import urlparse
 
@@ -51,12 +50,13 @@ def schedule_check():
     )
 
 
-def create_bucket_policy(fyl):
+def create_bucket_policy(policy_path: str):
     """Create a bucket policy."""
     if not isinstance(default_storage, S3Boto3Storage):
         return
-    policy = fyl.read()
-    default_storage.bucket.Policy().put(Policy=policy)
+    with open(policy_path) as fyl:
+        policy = fyl.read()
+        default_storage.bucket.Policy().put(Policy=policy)
 
 
 class Verbosity(Enum):
@@ -109,7 +109,6 @@ class Command(BaseCommand):
         default_path = "/var/www/conf/docker/bucket_policy.json"
         parser.add_argument(
             "--bucket-policy",
-            type=argparse.FileType("r"),
             default=default_path,
             help=(
                 "The path to the json file that should be used to create "
