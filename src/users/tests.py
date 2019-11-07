@@ -343,3 +343,27 @@ class SessionsTestCase(JsonApiTestCase):
         self.get(
             f"/{self.resource_name}/", asserted_status=status.HTTP_401_UNAUTHORIZED
         )
+
+    def test_include_user_fails(self):
+        """Test ?include=user results in a validation error."""
+        email = "user@example.com"
+        password = "pass"
+        User.objects.create_user(email=email, password=password)
+        data = {"data": self.get_data(email=email, password=password)}
+        token_json = self.post(f"/{self.resource_name}/", data=data).json()
+        token = token_json["data"]["attributes"]["token"]
+        # check the token is valid
+        self.client.credentials(  # pylint: disable=no-member
+            HTTP_AUTHORIZATION=f"Token {token}"
+        )
+        request = self.get(
+            f"/{self.resource_name}/?include=user",
+            asserted_status=status.HTTP_400_BAD_REQUEST,
+        )
+        json = request.json()
+        # check has correct error
+        self.assertHasError(
+            json,
+            "data",
+            "This endpoint does not support the include parameter for path user",
+        )

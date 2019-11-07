@@ -47,7 +47,11 @@ class SessionView(ViewSetMixin, auth_views.LoginView):
     def list(self, request, *args, **kwargs):
         """Return the session information."""
         self.check_authentication(request)
-        serializer = SessionSerializer(instance=[_Session(request)], many=True)
+        serializer = SessionSerializer(
+            context={"request": request, "view": self},
+            instance=[_Session(request)],
+            many=True,
+        )
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):

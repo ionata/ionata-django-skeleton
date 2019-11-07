@@ -24,13 +24,26 @@ class _UuidPk:
         self.pk = str(uuid4())
 
 
-class SessionSerializer(serializers.Serializer):
+class SessionSerializer(
+    serializers.IncludedResourcesValidationMixin,
+    serializers.SparseFieldsetsMixin,
+    serializers.Serializer,
+):
     """Session serializer."""
 
     user = serializers.ResourceRelatedField(model=User, read_only=True)
 
+    class JSONAPIMeta:
+        """JSONAPI meta information."""
 
-class TokenSerializer(auth_serializers.TokenSerializer):
+        resource_name = "sessions"
+
+
+class TokenSerializer(
+    serializers.IncludedResourcesValidationMixin,
+    serializers.SparseFieldsetsMixin,
+    auth_serializers.TokenSerializer,
+):
     """Set the pk of the instance to be the user's pk."""
 
     token = serializers.CharField(read_only=True, source="_backup_key")
@@ -41,6 +54,11 @@ class TokenSerializer(auth_serializers.TokenSerializer):
 
         fields = ["token", "user"]
 
+    class JSONAPIMeta:
+        """JSONAPI meta information."""
+
+        resource_name = "sessions"
+
     def __init__(self, *args, **kwargs):
         """Set the pk of the instance to be the user's pk."""
         super().__init__(*args, **kwargs)
@@ -49,15 +67,28 @@ class TokenSerializer(auth_serializers.TokenSerializer):
             self.instance.pk = self.context["request"].user.pk
 
 
-class LoginSerializer(auth_serializers.LoginSerializer):
+class LoginSerializer(
+    serializers.IncludedResourcesValidationMixin,
+    serializers.SparseFieldsetsMixin,
+    auth_serializers.LoginSerializer,
+):
     """Login serializer that removes case."""
+
+    class JSONAPIMeta:
+        """JSONAPI meta information."""
+
+        resource_name = "sessions"
 
     def validate_email(self, value):  # pylint: disable=no-self-use
         """Login serializer that removes case."""
         return value.casefold()
 
 
-class PasswordResetSerializer(auth_serializers.PasswordResetSerializer):
+class PasswordResetSerializer(
+    serializers.IncludedResourcesValidationMixin,
+    serializers.SparseFieldsetsMixin,
+    auth_serializers.PasswordResetSerializer,
+):
     """Password reset serializer that removes case."""
 
     class JSONAPIMeta:
@@ -94,7 +125,11 @@ class PasswordResetSerializer(auth_serializers.PasswordResetSerializer):
             self.instance = _UuidPk()
 
 
-class PasswordResetConfirmSerializer(auth_serializers.PasswordResetConfirmSerializer):
+class PasswordResetConfirmSerializer(
+    serializers.IncludedResourcesValidationMixin,
+    serializers.SparseFieldsetsMixin,
+    auth_serializers.PasswordResetConfirmSerializer,
+):
     """Make the fields write only."""
 
     new_password1 = serializers.CharField(write_only=True, max_length=128)
