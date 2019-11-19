@@ -31,11 +31,12 @@ If you don't have access, it's basically:
 * Copy example.env to .env:
   - `cp example.env .env`
 * Settings which will likely need to be set manually:
+  - For both:
+    - `DJANGO_SETTINGS_MODULE` - usually `webapp.settings`
+    - `ADMIN_USER`
   - For Development:
     - `DEBUG` - set it to true
     - `SITE_URL`
-    - `ADMIN_USER` - this is a development only setting
-    - `AWS_S3_SECURE_URLS` - set to false if not using https during development
   - For production:
     - `DEBUG` - set it to false
     - `SECRET_KEY`

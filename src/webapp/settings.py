@@ -22,14 +22,15 @@ if DEBUG:
     scheme = {
         **scheme,
         **{
-            "CELERY_BROKER_URL": (str, "redis://redis"),
+            "CELERY_BROKER_URL": (str, "redis://redis/0"),
             "ADMIN_USER": (dict, {"email": "test@example.com", "password": "password"}),
             "AWS_STORAGE_BUCKET_NAME": (str, "django"),
             "AWS_S3_REGION_NAME": (str, ""),
-            "AWS_S3_SECURE_URLS": (bool, True),
             "MAILGUN_API_KEY": (str, ""),
             "CELERY_TASK_DEFAULT_QUEUE": (str, "celery"),
             "AXES_KEY_PREFIX": (str, "axes"),
+            "AXES_REDIS_URL": (str, "rediscache://redis/1"),
+            "SECRET_KEY": (str, "super_secret_secret_key"),
         },
     }
 
@@ -276,7 +277,7 @@ if DEBUG:
     AWS_S3_ENDPOINT_URL = "http://minio:9000"
     AWS_ACCESS_KEY_ID = "djangos3"
     AWS_SECRET_ACCESS_KEY = "djangos3"
-    AWS_S3_SECURE_URLS = env("AWS_S3_SECURE_URLS")
+    AWS_S3_SECURE_URLS = url.scheme == "https"
     AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN", default=url.netloc)
     HEARTBEAT_SERVER = None
 
