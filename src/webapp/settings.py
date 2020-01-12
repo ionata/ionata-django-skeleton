@@ -298,4 +298,4 @@ if DEBUG:
     CORS_ORIGIN_WHITELIST = [item for item in ALLOWED_HOSTS if item != "*"]
 
 # Post debug setup dependant settings
-CSRF_TRUSTED_ORIGINS = CORS_ORIGIN_WHITELIST
+CSRF_TRUSTED_ORIGINS = [urlparse(origin).netloc for origin in CORS_ORIGIN_WHITELIST]
