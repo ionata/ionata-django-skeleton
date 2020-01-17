@@ -182,7 +182,7 @@ class UserSerializer(serializers.ModelSerializer):
         if self.instance is None:
             if "password" not in attrs:
                 msg = _("This field is required when creating a new user.")
-                raise ValidationError({"pasword": msg})
+                raise ValidationError({"password": msg})
         # updating
         else:
             # cannot update email address
