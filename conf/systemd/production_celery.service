@@ -1,5 +1,5 @@
 [Unit]
-Description=Celery beat & worker
+Description=Celery worker
 After=network.target
 
 [Service]
@@ -9,13 +9,14 @@ Group=www-data
 RuntimeDirectory=celery
 EnvironmentFile=/var/www/.env
 WorkingDirectory=/var/www
-ExecStart=/usr/local/bin/poetry run celery worker \
-  --beat \
+Restart=always
+ExecStart=/var/www/.venv/bin/python -m celery worker \
   --app webapp \
-  --queues ${CELERY_TASK_DEFAULT_QUEUE} \
   --loglevel error \
-  --schedule-filename /var/run/celery/celerybeat_schedule \
-  --pidfile /var/run/celery/celerybeat.pid
+  --pidfile /var/run/celery/celery.pid \
+  --task-events
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
 
 [Install]
 WantedBy=multi-user.target

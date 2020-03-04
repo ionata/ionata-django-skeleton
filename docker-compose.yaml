@@ -38,7 +38,7 @@ services:
       - "./Makefile:/var/www/Makefile"
   celery:
     <<: *backend
-    command: "poetry run celery worker -A webapp -l info -B --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+    command: "poetry run celery worker --app webapp --loglevel info --beat --scheduler django_celery_beat.schedulers:DatabaseScheduler"
   frontend:
     command: "npm run --prefix /var/www dev"
     image: "node"
