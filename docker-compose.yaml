@@ -39,14 +39,9 @@ services:
   celery:
     <<: *backend
     command: "poetry run celery worker --app webapp --loglevel info --beat --scheduler django_celery_beat.schedulers:DatabaseScheduler"
-  frontend:
-    command: "npm run --prefix /var/www dev"
-    image: "node"
-    volumes: ["./frontend:/var/www"]
   web:
     image: "nginx:mainline-alpine"
-    depends_on: ["backend", "frontend"]
+    depends_on: ["backend"]
     ports: ["8000:80"]
     volumes:
       - "./conf/docker/nginx.conf:/etc/nginx/nginx.conf"
-      - "./frontend:/var/www"
