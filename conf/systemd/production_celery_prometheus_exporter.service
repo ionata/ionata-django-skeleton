@@ -1,0 +1,16 @@
+[Unit]
+Description=Celery Promethues exporter
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/var/www/.env
+WorkingDirectory=/var/www
+Restart=always
+ExecStart=/var/www/.venv/bin/python -m celery_prometheus_exporter \
+  --broker ${CELERY_BROKER_URL} \
+  --queue-list ${CELERY_TASK_DEFAULT_QUEUE} \
+  --addr 0.0.0.0:9659
+
+[Install]
+WantedBy=multi-user.target
