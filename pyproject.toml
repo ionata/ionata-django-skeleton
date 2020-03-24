@@ -39,7 +39,7 @@ ipython = "^7.2"
 ptpython = "^2.0"
 # linting
 autopep8 = "^1.4"
-black = {version = "^18.3-alpha.0", allows-prereleases = true}
+black = {version = "^19.10b0", allow-prereleases = true}
 django-stubs = "^1.1"
 mypy = "*"
 pycodestyle = "^2.4"
