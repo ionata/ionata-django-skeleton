@@ -42,14 +42,6 @@ def get_site():
     return Site.objects.get_or_create(**kwargs)[0]
 
 
-def schedule_check():
-    """Schedule celery heartbeat task."""
-    interval = IntervalSchedule.objects.get_or_create(every=10, period="minutes")[0]
-    PeriodicTask.objects.get_or_create(
-        name="send_beat", task="webapp.tasks.send_beat", interval=interval
-    )
-
-
 def create_bucket_policy(policy_path: str):
     """Create a bucket policy."""
     if not isinstance(default_storage, S3Boto3Storage):
@@ -124,7 +116,6 @@ class Command(BaseCommand):
         bucket_policy = options["bucket_policy"]
         get_admin()
         get_site()
-        schedule_check()
         is_minio = "minio" in getattr(settings, "AWS_S3_ENDPOINT_URL", "")
         if settings.DEBUG and is_minio:
             create_bucket_policy(bucket_policy)

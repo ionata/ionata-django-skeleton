@@ -9,17 +9,6 @@ from django.utils.timezone import now
 
 
 @shared_task
-def send_beat():
-    """Alert the heartbeat server that celery is running."""
-    if not settings.HEARTBEAT_SERVER:
-        return
-    requests.post(
-        f"{settings.HEARTBEAT_SERVER}/api/v1/updates/",
-        {"project": settings.PROJECT_NAME, "status": "HEARTBEAT", "task": "send_beat"},
-    )
-
-
-@shared_task
 def email_admins_on_user_locked_out(cache_key, ip_address):
     """Email admins on user locked out."""
     cache = get_cache()

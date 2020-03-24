@@ -52,7 +52,6 @@ MANAGERS = ADMINS
 ADMIN_USER = env.dict("ADMIN_USER")
 ALLOWED_HOSTS: List[str] = [url.netloc]
 CORS_ORIGIN_WHITELIST: List[str] = [SITE_URL]
-HEARTBEAT_SERVER: Optional[str] = "https://heartbeat.ionata.com.au"
 
 
 # Services
@@ -279,7 +278,6 @@ if DEBUG:
     AWS_SECRET_ACCESS_KEY = "djangos3"
     AWS_S3_SECURE_URLS = url.scheme == "https"
     AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN", default=url.netloc)
-    HEARTBEAT_SERVER = None
 
     # Core
     INSTALLED_APPS += ["debug_toolbar"]
