@@ -42,7 +42,7 @@ PROJECT_NAME: str = "<INSERT_PROJECT_NAME_HERE>"
 SECRET_KEY: str = env("SECRET_KEY")
 SITE_URL: str = env("SITE_URL")
 # NOTE: We do not use the axes middleware because we want login attempts to
-# silently fail. Thus we silence `axes.W002` (invlaid MIDDLEWARE configuration).
+# silently fail. Thus we silence `axes.W002` (invalid MIDDLEWARE configuration).
 SILENCED_SYSTEM_CHECKS = ["axes.W002"]
 
 url = urlparse(SITE_URL)
