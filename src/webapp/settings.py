@@ -287,7 +287,6 @@ if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
-    AWS_AUTO_CREATE_BUCKET = True
 
     # Email
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

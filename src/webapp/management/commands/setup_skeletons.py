@@ -8,8 +8,8 @@ from django.contrib.sites.models import Site
 from django.core.files.storage import default_storage
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from django_celery_beat.models import IntervalSchedule, PeriodicTask
-from storages.backends.s3boto3 import S3Boto3Storage
+
+from webapp.storage import MediaS3
 
 
 def get_admin():
@@ -42,13 +42,24 @@ def get_site():
     return Site.objects.get_or_create(**kwargs)[0]
 
 
-def create_bucket_policy(policy_path: str):
-    """Create a bucket policy."""
-    if not isinstance(default_storage, S3Boto3Storage):
+def configure_bucket(policy_path: str):
+    """Configure the storage bucket."""
+    if not isinstance(default_storage, MediaS3):
         return
+    ensure_bucket_exists(default_storage)
+    create_bucket_policy(default_storage, policy_path)
+
+
+def ensure_bucket_exists(storage: MediaS3):
+    """Ensure the bucket exists."""
+    storage.create_bucket()
+
+
+def create_bucket_policy(storage: MediaS3, policy_path: str):
+    """Create a bucket policy."""
     with open(policy_path) as fyl:
         policy = fyl.read()
-        default_storage.bucket.Policy().put(Policy=policy)
+        storage.bucket.Policy().put(Policy=policy)
 
 
 class Verbosity(Enum):
@@ -118,7 +129,7 @@ class Command(BaseCommand):
         get_site()
         is_minio = "minio" in getattr(settings, "AWS_S3_ENDPOINT_URL", "")
         if settings.DEBUG and is_minio:
-            create_bucket_policy(bucket_policy)
+            configure_bucket(bucket_policy)
         elif not settings.DEBUG:
             self._log(f"Skipping creating bucket policy since settings.DEBUG is False")
         elif not is_minio:

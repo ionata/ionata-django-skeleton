@@ -9,8 +9,8 @@ install :
 	python3.7 -m venv .venv
 	poetry install
 	$(POETRY_MANAGE) migrate
-	$(POETRY_MANAGE) collectstatic --no-input
 	$(POETRY_MANAGE) setup_skeletons
+	$(POETRY_MANAGE) collectstatic --no-input
 
 format :
 	$(POETRY_RUN) isort $(SRC_FILES)
