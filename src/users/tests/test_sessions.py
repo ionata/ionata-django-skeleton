@@ -1,16 +1,14 @@
-
 """Tests for sessions endpoint."""
 # pylint: disable=invalid-name
 from __future__ import annotations
-
 
 from hamcrest import instance_of
 from rest_framework import status
 
 from users.models import User
+from users.tests import factories
 from webapp.tests.base import JsonApiTestCase
 from webapp.tests.matchers import is_to_one
-
 
 
 class SessionsTestCase(JsonApiTestCase):
@@ -24,7 +22,7 @@ class SessionsTestCase(JsonApiTestCase):
         """Test user can create session."""
         email = "test@example.com"
         password = "hellopass123"
-        user = User.objects.create_user(email=email, password=password)
+        user = factories.UserFactory(email=email, password=password)
         data = {"data": self.get_data(email=email, password=password)}
         response = self.post(
             f"/{self.resource_name}/",
@@ -43,7 +41,7 @@ class SessionsTestCase(JsonApiTestCase):
         """Test user can get own session."""
         email = "test@example.com"
         password = "hellopass123"
-        user = User.objects.create_user(email=email, password=password)
+        user = factories.UserFactory(email=email, password=password)
         self.auth(user)
         response = self.get(
             f"/{self.resource_name}/",
@@ -73,7 +71,7 @@ class SessionsTestCase(JsonApiTestCase):
         """Test authenticated user can delete session."""
         email = "user@example.com"
         password = "pass"
-        User.objects.create_user(email=email, password=password)
+        factories.UserFactory(email=email, password=password)
         data = {"data": self.get_data(email=email, password=password)}
         token_json = self.post(f"/{self.resource_name}/", data=data).json()
         token = token_json["data"]["attributes"]["token"]
@@ -99,7 +97,7 @@ class SessionsTestCase(JsonApiTestCase):
         """Test ?include=user results in a validation error."""
         email = "user@example.com"
         password = "pass"
-        User.objects.create_user(email=email, password=password)
+        factories.UserFactory(email=email, password=password)
         data = {"data": self.get_data(email=email, password=password)}
         token_json = self.post(f"/{self.resource_name}/", data=data).json()
         token = token_json["data"]["attributes"]["token"]

@@ -8,6 +8,7 @@ from hamcrest import instance_of
 from rest_framework import status
 
 from users.models import User
+from users.tests import factories
 from webapp.tests.base import JsonApiTestCase
 from webapp.tests.matchers import IsJsonApiRelationship
 
@@ -41,7 +42,7 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_authenticated_user_cannot_create_user(self):
         """Test authenticated user cannot create user."""
-        user = User.objects.create_user(email="user@example.com", password="pass")
+        user = factories.UserFactory()
         self.auth(user)
         email = "test@example.com"
         password = "hellopass123"
@@ -57,17 +58,14 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_user_with_perms_can_create_user(self):
         """Test authenticated user cannot create user."""
-        user = User.objects.create_user(email="user@example.com", password="pass")
+        user = factories.UserFactory()
         self.give_user_perm(user, "users.add_user")
         self.auth(user)
         self.test_can_create_user()
 
     def test_user_cannot_get_other_user(self):
         """Test user cannot get other user."""
-        user = User.objects.create_user(email="user@example.com", password="pass")
-        other_user = User.objects.create_user(
-            email="other@example.com", password="pass"
-        )
+        user, other_user = factories.UserFactory.create_batch(size=2)
         self.auth(user)
         response = self.get(
             f"/{self.resource_name}/{other_user.pk}/",
@@ -79,10 +77,7 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_user_with_perms_can_get_other_user(self):
         """Test user cannot get other user."""
-        user = User.objects.create_user(email="user@example.com", password="pass")
-        other_user = User.objects.create_user(
-            email="other@example.com", password="pass"
-        )
+        user, other_user = factories.UserFactory.create_batch(size=2)
         self.give_user_perm(user, "users.view_user")
         self.auth(user)
         response = self.get(
@@ -96,12 +91,9 @@ class UsersTestCase(JsonApiTestCase):
         self.assertEqual(json["data"]["attributes"]["email"], other_user.email)
 
     def test_user_cannot_patch_other_user(self):
-        """Test user cannot get other user."""
+        """Test user cannot update other users."""
         password = "pass"
-        user = User.objects.create_user(email="user@example.com", password=password)
-        other_user = User.objects.create_user(
-            email="other@example.com", password=password
-        )
+        user, other_user = factories.UserFactory.create_batch(password=password, size=2)
         self.auth(user)
         data = {
             "data": self.get_data(
@@ -121,7 +113,7 @@ class UsersTestCase(JsonApiTestCase):
         """Test user can change their own password."""
         password = "pass"
         new_password = "hellopass123"
-        user = User.objects.create_user(email="user@example.com", password=password)
+        user = factories.UserFactory(email="user@example.com", password=password)
         self.auth(user)
         data = {
             "data": self.get_data(
@@ -142,7 +134,7 @@ class UsersTestCase(JsonApiTestCase):
         """Test user cannot change own password without current password."""
         password = "pass"
         new_password = "hellopass123"
-        user = User.objects.create_user(email="user@example.com", password=password)
+        user = factories.UserFactory(password=password)
         self.auth(user)
         data = {"data": self.get_data(id=user.id, password=new_password)}
         response = self.patch(
@@ -160,9 +152,8 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_user_cannot_change_own_password_without_correct_current_password(self):
         """Test user cannot change own password without correct current password."""
-        password = "pass"
         new_password = "hellopass123"
-        user = User.objects.create_user(email="user@example.com", password=password)
+        user = factories.UserFactory()
         self.auth(user)
         data = {
             "data": self.get_data(
@@ -182,8 +173,7 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_can_get_own_user(self):
         """Test user can get own user."""
-        password = "pass"
-        user = User.objects.create_user(email="user@example.com", password=password)
+        user = factories.UserFactory()
         self.auth(user)
         response = self.get(
             f"/{self.resource_name}/{user.pk}/",
@@ -199,10 +189,7 @@ class UsersTestCase(JsonApiTestCase):
         """Test user with proper perms can patch other user."""
         password = "pass"
         new_password = "hellopass123"
-        user = User.objects.create_user(email="user@example.com", password=password)
-        other_user = User.objects.create_user(
-            email="other@example.com", password=password
-        )
+        user, other_user = factories.UserFactory.create_batch(size=2)
         self.give_user_perm(user, "users.change_user")
         self.auth(user)
         data = {
@@ -226,7 +213,7 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_unauthenticated_user_cannot_delete(self):
         """Test unauthenticated user cannot delete."""
-        user = User.objects.create_user(email="user@example.com", password="pass")
+        user = factories.UserFactory()
         response = self.delete(
             f"/{self.resource_name}/{user.pk}/",
             asserted_status=status.HTTP_405_METHOD_NOT_ALLOWED,
@@ -237,7 +224,7 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_authenticated_user_cannot_delete_self(self):
         """Test authenticated user cannot delete self."""
-        user = User.objects.create_user(email="test@example.com", password="pass")
+        user = factories.UserFactory()
         self.give_user_perm(user, "users.delete_user")
         self.auth(user)
         response = self.delete(
@@ -250,13 +237,13 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_authenticated_user_cannot_delete_other_user(self):
         """Test unauthenticated user cannot delete other user."""
-        user = User.objects.create_user(email="test@example.com", password="pass")
+        user = factories.UserFactory()
         self.auth(user)
         self.test_unauthenticated_user_cannot_delete()
 
     def test_authenticated_user_with_perms_cannot_delete_other_user(self):
         """Test authenticated user with perms cannot delete other user."""
-        user = User.objects.create_user(email="test@example.com", password="pass")
+        user = factories.UserFactory()
         self.give_user_perm(user, "users.delete_user")
         self.auth(user)
         self.test_unauthenticated_user_cannot_delete()
