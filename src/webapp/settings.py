@@ -70,8 +70,8 @@ AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 
 INSTALLED_APPS = [
     # Project apps
-    "webapp",
-    "users",
+    "webapp.apps.WebAppConfig",
+    "users.apps.UsersConfig",
     # Our defaults
     "corsheaders",
     "anymail",

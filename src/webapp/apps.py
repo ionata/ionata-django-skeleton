@@ -9,5 +9,5 @@ class WebAppConfig(AppConfig):
 
     def ready(self):
         """Import signals."""
-        # noqa pylint: disable=unused-import
+        # noqa pylint: disable=unused-import,import-outside-toplevel
         from webapp import signals
