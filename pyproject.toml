@@ -38,7 +38,6 @@ ipython = "^7.2"
 ptpython = "^2.0"
 # linting
 autopep8 = "^1.4"
-black = {version = "^19.10b0", allow-prereleases = true}
 django-stubs = "^1.1"
 mypy = "*"
 pycodestyle = "^2.4"
@@ -49,6 +48,9 @@ pyls-isort = "^0.1.1"
 pyls-mypy = "^0.1.5"
 python-language-server = "^0.21.4"
 rope = "^0.11.0"
+# formatting
+black = {version = "^19.10b0", allow-prereleases = true}
+isort = {version = "^4.3.21", extras = ["pyproject"]}
 # testing
 factory_boy = "^2.12.0"
 pyhamcrest = "^1.9"
