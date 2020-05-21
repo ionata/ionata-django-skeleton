@@ -5,6 +5,7 @@ import sys
 
 
 def main():
+    """Run django management commands."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "webapp.settings")
     try:
         # pylint: disable=import-outside-toplevel

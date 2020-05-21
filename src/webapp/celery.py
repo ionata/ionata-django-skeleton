@@ -1,4 +1,4 @@
-"""Bootstrap celery with Django's config"""
+"""Bootstrap celery with Django's config."""
 from celery import Celery
 from django.conf import settings
 
