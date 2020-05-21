@@ -2,34 +2,28 @@
 # pylint: disable=invalid-name
 from __future__ import annotations
 
-from typing import Dict
-
-from hamcrest import instance_of
 from rest_framework import status
 
 from users.models import User
-from users.tests import factories
+from users.tests import factories, schemas
 from webapp.tests.base import JsonApiTestCase
-from webapp.tests.matchers import IsJsonApiRelationship
 
 
 class UsersTestCase(JsonApiTestCase):
     """Test validation on users endpoint."""
 
-    resource_name: str = "users"
-    attributes = {"email": instance_of(str)}
-    relationships: Dict[str, IsJsonApiRelationship] = {}
+    schema = schemas.UsersSchema
 
     def test_can_create_user(self):
         """Test can create users."""
         email = "test@example.com"
         password = "hellopass123"
-        data = {"data": self.get_data(email=email, password=password)}
+        data = {"data": self.schema.get_data(email=email, password=password)}
         response = self.post(
             f"/{self.resource_name}/",
             data=data,
             asserted_status=status.HTTP_201_CREATED,
-            asserted_schema=self.get_schema(),
+            asserted_schema=self.schema.get_matcher(),
         )
         json = response.json()
         # check email is correct
@@ -46,7 +40,7 @@ class UsersTestCase(JsonApiTestCase):
         self.auth(user)
         email = "test@example.com"
         password = "hellopass123"
-        data = {"data": self.get_data(email=email, password=password)}
+        data = {"data": self.schema.get_data(email=email, password=password)}
         response = self.post(
             f"/{self.resource_name}/",
             data=data,
@@ -58,8 +52,7 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_user_with_perms_can_create_user(self):
         """Test authenticated user cannot create user."""
-        user = factories.UserFactory()
-        self.give_user_perm(user, "users.add_user")
+        user = factories.UserFactory(permission_codes=["users.add_user"])
         self.auth(user)
         self.test_can_create_user()
 
@@ -77,13 +70,13 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_user_with_perms_can_get_other_user(self):
         """Test user cannot get other user."""
-        user, other_user = factories.UserFactory.create_batch(size=2)
-        self.give_user_perm(user, "users.view_user")
+        user = factories.UserFactory(permission_codes=["users.view_user"])
+        other_user = factories.UserFactory()
         self.auth(user)
         response = self.get(
             f"/{self.resource_name}/{other_user.pk}/",
             asserted_status=status.HTTP_200_OK,
-            asserted_schema=self.get_schema(),
+            asserted_schema=self.schema.get_matcher(),
         )
         json = response.json()
         # check parameters are correct
@@ -96,7 +89,7 @@ class UsersTestCase(JsonApiTestCase):
         user, other_user = factories.UserFactory.create_batch(password=password, size=2)
         self.auth(user)
         data = {
-            "data": self.get_data(
+            "data": self.schema.get_data(
                 id=other_user.id, current_password=password, password="hellopass123"
             )
         }
@@ -116,7 +109,7 @@ class UsersTestCase(JsonApiTestCase):
         user = factories.UserFactory(email="user@example.com", password=password)
         self.auth(user)
         data = {
-            "data": self.get_data(
+            "data": self.schema.get_data(
                 id=user.id, current_password=password, password=new_password
             )
         }
@@ -124,7 +117,7 @@ class UsersTestCase(JsonApiTestCase):
             f"/{self.resource_name}/{user.pk}/",
             data=data,
             asserted_status=status.HTTP_200_OK,
-            asserted_schema=self.get_schema(),
+            asserted_schema=self.schema.get_matcher(),
         )
         # check password was successfully updated
         user.refresh_from_db()
@@ -136,7 +129,7 @@ class UsersTestCase(JsonApiTestCase):
         new_password = "hellopass123"
         user = factories.UserFactory(password=password)
         self.auth(user)
-        data = {"data": self.get_data(id=user.id, password=new_password)}
+        data = {"data": self.schema.get_data(id=user.id, password=new_password)}
         response = self.patch(
             f"/{self.resource_name}/{user.pk}/",
             data=data,
@@ -156,7 +149,7 @@ class UsersTestCase(JsonApiTestCase):
         user = factories.UserFactory()
         self.auth(user)
         data = {
-            "data": self.get_data(
+            "data": self.schema.get_data(
                 id=user.id, current_password="wrong pass", password=new_password
             )
         }
@@ -178,7 +171,7 @@ class UsersTestCase(JsonApiTestCase):
         response = self.get(
             f"/{self.resource_name}/{user.pk}/",
             asserted_status=status.HTTP_200_OK,
-            asserted_schema=self.get_schema(),
+            asserted_schema=self.schema.get_matcher(),
         )
         json = response.json()
         # check parameters are correct
@@ -189,11 +182,11 @@ class UsersTestCase(JsonApiTestCase):
         """Test user with proper perms can patch other user."""
         password = "pass"
         new_password = "hellopass123"
-        user, other_user = factories.UserFactory.create_batch(size=2)
-        self.give_user_perm(user, "users.change_user")
+        user = factories.UserFactory(permission_codes=["users.change_user"])
+        other_user = factories.UserFactory()
         self.auth(user)
         data = {
-            "data": self.get_data(
+            "data": self.schema.get_data(
                 id=other_user.id, current_password=password, password=new_password
             )
         }
@@ -201,7 +194,7 @@ class UsersTestCase(JsonApiTestCase):
             f"/{self.resource_name}/{other_user.pk}/",
             data=data,
             asserted_status=status.HTTP_200_OK,
-            asserted_schema=self.get_schema(),
+            asserted_schema=self.schema.get_matcher(),
         )
         json = response.json()
         # check parameters are correct
@@ -224,8 +217,7 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_authenticated_user_cannot_delete_self(self):
         """Test authenticated user cannot delete self."""
-        user = factories.UserFactory()
-        self.give_user_perm(user, "users.delete_user")
+        user = factories.UserFactory(permission_codes=["users.delete_user"])
         self.auth(user)
         response = self.delete(
             f"/{self.resource_name}/{user.pk}/",
@@ -243,7 +235,6 @@ class UsersTestCase(JsonApiTestCase):
 
     def test_authenticated_user_with_perms_cannot_delete_other_user(self):
         """Test authenticated user with perms cannot delete other user."""
-        user = factories.UserFactory()
-        self.give_user_perm(user, "users.delete_user")
+        user = factories.UserFactory(permission_codes=["users.delete_user"])
         self.auth(user)
         self.test_unauthenticated_user_cannot_delete()

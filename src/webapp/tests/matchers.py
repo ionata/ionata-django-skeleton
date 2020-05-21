@@ -1,7 +1,7 @@
 """Project wide hamcrest matchers."""
 from __future__ import annotations
 
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, List, Optional, Union
 
 from hamcrest import has_entries  # type: ignore
 from hamcrest import (
@@ -9,10 +9,12 @@ from hamcrest import (
     any_of,
     empty,
     equal_to,
+    has_key,
     has_length,
     instance_of,
     matches_regexp,
     none,
+    not_,
     not_none,
     only_contains,
 )
@@ -150,6 +152,46 @@ class IsToMany(IsResourceIdentifierObject):
 
 
 IsJsonApiRelationship = Union[IsToOne, IsToMany]
+
+
+class IsDocument(WrappingMatcher):
+    """Match a JSON:API top level document."""
+
+    def __init__(
+        self,
+        *,
+        resource_matcher: IsResourceIdentifierObject,
+        included_matchers: List[IsResourceObject],
+        optional: bool,
+        many: bool,
+    ):
+        """Initialise the class."""
+        super().__init__()
+        self.resource_matcher = resource_matcher
+        self.included_matchers = included_matchers
+        self.optional = optional
+        self.many = many
+
+    @property
+    def matcher(self) -> BaseMatcher:
+        """Return matcher."""
+        matcher = self.resource_matcher
+        if self.many:
+            matcher = all_of(instance_of(list), only_contains(matcher))
+            if self.optional:
+                matcher = any_of(empty(), matcher)
+        elif self.optional:
+            matcher = any_of(none(), matcher)
+        else:
+            matcher = all_of(not_none(), matcher)
+        include_matcher = any_of(
+            not_(has_key("included")),
+            has_entries(
+                included=any_of(empty(), only_contains(*self.included_matchers))
+            ),
+        )
+
+        return all_of(has_entries(data=matcher), include_matcher)
 
 
 def is_geo_point():
