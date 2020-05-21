@@ -1,5 +1,4 @@
 """Project wide tasks."""
-import requests
 from axes.helpers import get_cache, get_cache_timeout
 from celery import shared_task  # pylint: disable=no-name-in-module
 from django.conf import settings  # pylint: disable=wrong-import-order

@@ -38,12 +38,14 @@ class SessionView(ViewSetMixin, auth_views.LoginView):
         if not self.request.user.is_authenticated:
             raise NotAuthenticated()
 
+    # pylint: disable=unused-argument
     def delete(self, request, *args, **kwargs):
         """Logout on delete."""
         self.check_authentication(request)
         auth_views.LogoutView().logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    # pylint: disable=unused-argument
     def list(self, request, *args, **kwargs):
         """Return the session information."""
         self.check_authentication(request)

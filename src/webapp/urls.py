@@ -8,6 +8,7 @@ from django.urls import include, path  # type: ignore
 def _static_urls() -> list:
     if not settings.DEBUG:
         return []
+    # pylint: disable=import-outside-toplevel
     from django.conf.urls.static import static  # type: ignore
     from django.contrib.staticfiles import urls  # type: ignore
 
@@ -25,7 +26,7 @@ def _djdt_urls() -> list:
 
 def _api_urls() -> list:
     if apps.is_installed("rest_framework"):
-        from webapp import api
+        from webapp import api  # pylint: disable=import-outside-toplevel
 
         return api.api
     return []
