@@ -6,7 +6,7 @@ description = ""
 authors = ["Ionata <webmaster@ionata.com.au>"]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.6.1"
 celery = {version = "^4.3", extras = ["redis"]}
 celery-prometheus-exporter = "^1.7"
 django = "^2.2"
@@ -51,6 +51,7 @@ rope = "^0.11.0"
 # formatting
 black = {version = "^19.10b0", allow-prereleases = true}
 isort = {version = "^4.3.21", extras = ["pyproject"]}
+pre-commit = "^2.4.0"
 # testing
 factory_boy = "^2.12.0"
 pyhamcrest = "^1.9"
