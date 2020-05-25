@@ -7,11 +7,11 @@ authors = ["Ionata <webmaster@ionata.com.au>"]
 
 [tool.poetry.dependencies]
 python = "^3.6.1"
-celery = {version = "^4.3", extras = ["redis"]}
+celery = { version = "^4.3", extras = ["redis"] }
 celery-prometheus-exporter = "^1.7"
 django = "^2.2"
 django-allauth = "^0.39.1"
-django-anymail = {version = "^6.1", extras = ["mailgun"]}
+django-anymail = { version = "^6.1", extras = ["mailgun"] }
 django-axes = "^5.0"
 django-celery-beat = "^1.5"
 django-celery-results = "^1.1"
@@ -19,10 +19,10 @@ django-cors-headers = "^3.1"
 django-environ = "^0.4.5"
 django-extensions = "^2.2"
 django-filter = "^2.2"
-django-redis = "~=4.10.0"  # does not follow semver
+django-redis = "~=4.10.0" # does not follow semver
 django-rest-auth = "^0.9.5"
-django-storages = {version = "^1.7", extras = ["boto3"]}
-djangorestframework = "~=3.10.3"  # does not follow semver
+django-storages = { version = "^1.7", extras = ["boto3"] }
+djangorestframework = "~=3.10.3" # does not follow semver
 djangorestframework-filters = ">=1.0.0.dev0"
 djangorestframework-jsonapi = "^2.8"
 gunicorn = "^19.9"
@@ -49,8 +49,8 @@ pyls-mypy = "^0.1.5"
 python-language-server = "^0.21.4"
 rope = "^0.11.0"
 # formatting
-black = {version = "^19.10b0", allow-prereleases = true}
-isort = {version = "^4.3.21", extras = ["pyproject"]}
+black = { version = "^19.10b0", allow-prereleases = true }
+isort = { version = "^4.3.21", extras = ["pyproject"] }
 pre-commit = "^2.4.0"
 # testing
 factory_boy = "^2.12.0"
@@ -68,6 +68,7 @@ include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
 line_length = 88
+known_third_party = ["axes", "celery", "django", "environ", "factory", "hamcrest", "rest_auth", "rest_framework", "rest_framework_json_api", "storages"]
 
 [build-system]
 requires = ["poetry>=0.12"]
