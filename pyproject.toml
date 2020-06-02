@@ -39,7 +39,7 @@ ptpython = "^2.0"
 # linting
 autopep8 = "^1.4"
 django-stubs = "^1.1"
-mypy = "*"
+mypy = "^0.770"
 pycodestyle = "^2.4"
 pydocstyle = "^5.0.2"
 pylint = "^2.2"

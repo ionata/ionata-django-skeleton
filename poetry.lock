@@ -1521,7 +1521,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "bbfab48847abdaef42c9e06ad31191bcdc605dacc76f53b8026c4afe96429a08"
+content-hash = "0d6944a54d799cb12b4633a458af66e4e17773dc07f372cc5116b8d0821b16e4"
 python-versions = "^3.6.1"
 
 [metadata.files]
