@@ -71,8 +71,11 @@ use_parentheses = true
 line_length = 88
 known_third_party = ["axes", "celery", "django", "environ", "factory", "hamcrest", "rest_auth", "rest_framework", "rest_framework_json_api", "storages"]
 
-[tool.pylint]
+[tool.pylint.master]
 load-plugins = "pylint_django"
+
+[tool.pylint."messages control"]
+disable = "bad-continuation,too-many-ancestors"
 
 [build-system]
 requires = ["poetry>=0.12"]
