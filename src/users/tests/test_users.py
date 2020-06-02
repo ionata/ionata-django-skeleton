@@ -1,5 +1,4 @@
 """Tests for users endpoint."""
-# pylint: disable=invalid-name
 from __future__ import annotations
 
 from rest_framework import status
@@ -9,13 +8,13 @@ from users.tests import factories, schemas
 from webapp.tests.base import JsonApiTestCase
 
 
-class UsersTestCase(JsonApiTestCase):
+class TestCase(JsonApiTestCase):
     """Test validation on users endpoint."""
 
     schema = schemas.UsersSchema
 
-    def test_can_create_user(self):
-        """Test can create users."""
+    def test_anon_create(self):
+        """Unauthenticated users can create users."""
         email = "test@example.com"
         password = "hellopass123"
         data = {"data": self.schema.get_data(email=email, password=password)}
@@ -34,8 +33,8 @@ class UsersTestCase(JsonApiTestCase):
         # check the was correctly hashed and set
         self.assertTrue(user.check_password(password))
 
-    def test_authenticated_user_cannot_create_user(self):
-        """Test authenticated user cannot create user."""
+    def test_user_create(self):
+        """User cannot create user."""
         user = factories.UserFactory()
         self.auth(user)
         email = "test@example.com"
@@ -50,14 +49,14 @@ class UsersTestCase(JsonApiTestCase):
         # check email is correct
         self.assertHasError(json, "data", "You cannot create users.")
 
-    def test_user_with_perms_can_create_user(self):
-        """Test authenticated user cannot create user."""
+    def test_uwp_create(self):
+        """Users with perms can create users."""
         user = factories.UserFactory(permission_codes=["users.add_user"])
         self.auth(user)
-        self.test_can_create_user()
+        self.test_anon_create()
 
-    def test_user_cannot_get_other_user(self):
-        """Test user cannot get other user."""
+    def test_user_get_other(self):
+        """User cannot get other user."""
         user, other_user = factories.UserFactory.create_batch(size=2)
         self.auth(user)
         response = self.get(
@@ -68,8 +67,8 @@ class UsersTestCase(JsonApiTestCase):
         # check has correct error
         self.assertHasError(json, "", "Not found.")
 
-    def test_user_with_perms_can_get_other_user(self):
-        """Test user cannot get other user."""
+    def test_uwp_get_other(self):
+        """User with perms can get other users."""
         user = factories.UserFactory(permission_codes=["users.view_user"])
         other_user = factories.UserFactory()
         self.auth(user)
@@ -83,8 +82,8 @@ class UsersTestCase(JsonApiTestCase):
         self.assertEqual(json["data"]["id"], str(other_user.pk))
         self.assertEqual(json["data"]["attributes"]["email"], other_user.email)
 
-    def test_user_cannot_patch_other_user(self):
-        """Test user cannot update other users."""
+    def test_user_patch_other(self):
+        """User cannot update other users."""
         password = "pass"
         user, other_user = factories.UserFactory.create_batch(password=password, size=2)
         self.auth(user)
@@ -102,8 +101,8 @@ class UsersTestCase(JsonApiTestCase):
         # check has correct error
         self.assertHasError(json, "", "Not found.")
 
-    def test_user_can_change_own_password(self):
-        """Test user can change their own password."""
+    def test_user_patch_password(self):
+        """User can change their own password."""
         password = "pass"
         new_password = "hellopass123"
         user = factories.UserFactory(email="user@example.com", password=password)
@@ -123,8 +122,8 @@ class UsersTestCase(JsonApiTestCase):
         user.refresh_from_db()
         self.assertTrue(user.check_password(new_password))
 
-    def test_user_cannot_change_own_password_without_current_password(self):
-        """Test user cannot change own password without current password."""
+    def test_current_password_required(self):
+        """User cannot change own password without current password."""
         password = "pass"
         new_password = "hellopass123"
         user = factories.UserFactory(password=password)
@@ -143,8 +142,8 @@ class UsersTestCase(JsonApiTestCase):
             "This field is required when changing your password.",
         )
 
-    def test_user_cannot_change_own_password_without_correct_current_password(self):
-        """Test user cannot change own password without correct current password."""
+    def test_current_password_correct(self):
+        """User cannot change own password without correct current password."""
         new_password = "hellopass123"
         user = factories.UserFactory()
         self.auth(user)
@@ -164,8 +163,8 @@ class UsersTestCase(JsonApiTestCase):
             json, "current_password", "Your current password is incorrect."
         )
 
-    def test_can_get_own_user(self):
-        """Test user can get own user."""
+    def test_user_get_self(self):
+        """User can get own user."""
         user = factories.UserFactory()
         self.auth(user)
         response = self.get(
@@ -178,8 +177,8 @@ class UsersTestCase(JsonApiTestCase):
         self.assertEqual(json["data"]["id"], str(user.pk))
         self.assertEqual(json["data"]["attributes"]["email"], user.email)
 
-    def test_can_patch_other_user_with_perms(self):
-        """Test user with proper perms can patch other user."""
+    def test_uwp_patch_other(self):
+        """User with proper perms can patch other user."""
         password = "pass"
         new_password = "hellopass123"
         user = factories.UserFactory(permission_codes=["users.change_user"])
@@ -204,8 +203,8 @@ class UsersTestCase(JsonApiTestCase):
         other_user.refresh_from_db()
         self.assertTrue(other_user.check_password(new_password))
 
-    def test_unauthenticated_user_cannot_delete(self):
-        """Test unauthenticated user cannot delete."""
+    def test_anon_delete(self):
+        """Unauthenticated user cannot delete."""
         user = factories.UserFactory()
         response = self.delete(
             f"/{self.resource_name}/{user.pk}/",
@@ -215,8 +214,8 @@ class UsersTestCase(JsonApiTestCase):
         # check has correct error
         self.assertHasError(json, "data", 'Method "DELETE" not allowed.')
 
-    def test_authenticated_user_cannot_delete_self(self):
-        """Test authenticated user cannot delete self."""
+    def test_user_delete_self(self):
+        """User cannot delete self."""
         user = factories.UserFactory(permission_codes=["users.delete_user"])
         self.auth(user)
         response = self.delete(
@@ -227,14 +226,14 @@ class UsersTestCase(JsonApiTestCase):
         # check has correct error
         self.assertHasError(json, "data", 'Method "DELETE" not allowed.')
 
-    def test_authenticated_user_cannot_delete_other_user(self):
-        """Test unauthenticated user cannot delete other user."""
+    def test_user_delete_other(self):
+        """User cannot delete other user."""
         user = factories.UserFactory()
         self.auth(user)
-        self.test_unauthenticated_user_cannot_delete()
+        self.test_anon_delete()
 
-    def test_authenticated_user_with_perms_cannot_delete_other_user(self):
-        """Test authenticated user with perms cannot delete other user."""
+    def test_uwp_delete_other(self):
+        """User with perms cannot delete other user."""
         user = factories.UserFactory(permission_codes=["users.delete_user"])
         self.auth(user)
-        self.test_unauthenticated_user_cannot_delete()
+        self.test_anon_delete()

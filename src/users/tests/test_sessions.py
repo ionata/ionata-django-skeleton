@@ -8,13 +8,13 @@ from users.tests import factories, schemas
 from webapp.tests.base import JsonApiTestCase
 
 
-class SessionsTestCase(JsonApiTestCase):
+class TestCase(JsonApiTestCase):
     """Test validation on sessions endpoint."""
 
     schema = schemas.SessionsSchema
 
-    def test_can_create_session(self):
-        """Test user can create session."""
+    def test_anon_create(self):
+        """Unauthenticated user can create session."""
         email = "test@example.com"
         password = "hellopass123"
         user = factories.UserFactory(email=email, password=password)
@@ -32,8 +32,8 @@ class SessionsTestCase(JsonApiTestCase):
             json["data"]["relationships"]["user"]["data"]["id"], str(user.pk)
         )
 
-    def test_can_get_own_session(self):
-        """Test user can get own session."""
+    def test_user_get_own(self):
+        """User can get own session."""
         email = "test@example.com"
         password = "hellopass123"
         user = factories.UserFactory(email=email, password=password)
@@ -51,8 +51,8 @@ class SessionsTestCase(JsonApiTestCase):
         self.assertNotIn("token", session["attributes"])
         self.assertEqual(session["relationships"]["user"]["data"]["id"], str(user.pk))
 
-    def test_unauthenticated_user_cannot_get_session(self):
-        """Test unauthenticated user cannot get session."""
+    def test_anon_get(self):
+        """Unauthenticated user cannot get session."""
         response = self.get(
             f"/{self.resource_name}/", asserted_status=status.HTTP_401_UNAUTHORIZED
         )
@@ -62,8 +62,8 @@ class SessionsTestCase(JsonApiTestCase):
             json, "data", "Authentication credentials were not provided."
         )
 
-    def test_authenticated_user_can_delete_session(self):
-        """Test authenticated user can delete session."""
+    def test_user_delete(self):
+        """User can delete session."""
         email = "user@example.com"
         password = "pass"
         factories.UserFactory(email=email, password=password)
@@ -88,8 +88,8 @@ class SessionsTestCase(JsonApiTestCase):
             f"/{self.resource_name}/", asserted_status=status.HTTP_401_UNAUTHORIZED
         )
 
-    def test_include_user_fails(self):
-        """Test ?include=user results in a validation error."""
+    def test_include_user(self):
+        """User cannot be included in compound document."""
         email = "user@example.com"
         password = "pass"
         factories.UserFactory(email=email, password=password)
