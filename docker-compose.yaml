@@ -1,5 +1,5 @@
 version: "3"
-volumes: { home, db, minio1, minio2, redis, npm, venv }
+volumes: { home, db, minio1, minio2, redis, venv }
 networks: { default }
 services:
   db:
