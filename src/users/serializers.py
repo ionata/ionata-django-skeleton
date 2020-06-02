@@ -106,7 +106,7 @@ class PasswordResetSerializer(
             email_encoded = email_encoded.decode("utf-8")
         return {"email_encoded": email_encoded, "project_name": settings.PROJECT_NAME}
 
-    def get_email_options(self):  # pylint: disable=no-self-use
+    def get_email_options(self):
         """Update email options."""
         return {
             **super().get_email_options(),

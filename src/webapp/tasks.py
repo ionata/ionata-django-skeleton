@@ -1,7 +1,7 @@
 """Project wide tasks."""
 from axes.helpers import get_cache, get_cache_timeout
-from celery import shared_task  # pylint: disable=no-name-in-module
-from django.conf import settings  # pylint: disable=wrong-import-order
+from celery import shared_task
+from django.conf import settings
 from django.core.mail import mail_admins
 from django.template.loader import render_to_string
 from django.utils.timezone import now
