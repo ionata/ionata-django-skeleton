@@ -527,14 +527,17 @@ category = "main"
 description = "A Django REST framework API adapter for the JSON API spec."
 name = "djangorestframework-jsonapi"
 optional = false
-python-versions = "*"
-version = "2.8.0"
+python-versions = ">=3.5"
+version = "3.1.0"
 
 [package.dependencies]
 django = ">=1.11"
-djangorestframework = ">=3.6.3"
+djangorestframework = ">=3.10"
 inflection = ">=0.3.0"
-six = "*"
+
+[package.extras]
+django-filter = ["django-filter (>=2.0)"]
+django-polymorphic = ["django-polymorphic (>=2.0)"]
 
 [[package]]
 category = "dev"
@@ -1511,7 +1514,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "68ce4d43519b6df92d71e9295809942fb5384c235c865befe668526a06cbccb3"
+content-hash = "1edf2214436ff09cfe1828b55b8f53bb05b69eb8243c7b48edec402f7dbaa2c6"
 python-versions = "^3.6.1"
 
 [metadata.files]
@@ -1679,8 +1682,8 @@ djangorestframework-filters = [
     {file = "djangorestframework_filters-1.0.0.dev0-py3-none-any.whl", hash = "sha256:dfb58706f5f00ce72a01968d99fcc3e500bdeaaa275568fd60ae868bf2b90aad"},
 ]
 djangorestframework-jsonapi = [
-    {file = "djangorestframework-jsonapi-2.8.0.tar.gz", hash = "sha256:4cc55af703b9d312d0c3424201ba6cbae0d14c3c5bdf64b3f6270110379f0106"},
-    {file = "djangorestframework_jsonapi-2.8.0-py2.py3-none-any.whl", hash = "sha256:574171f1457b905dcd0c0197e91111c44f636376823b4856709a80176cc69160"},
+    {file = "djangorestframework-jsonapi-3.1.0.tar.gz", hash = "sha256:894826320cc9e06942b3f6e3604fc5c093854275fab498d52de4a3cd24aac58f"},
+    {file = "djangorestframework_jsonapi-3.1.0-py2.py3-none-any.whl", hash = "sha256:8d61bb16970e6c4b737b166c3888a319f86dad0321a41d801426d24a6ebd9fc7"},
 ]
 docopt = [
     {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},

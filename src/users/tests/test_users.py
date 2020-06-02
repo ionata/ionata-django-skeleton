@@ -66,7 +66,7 @@ class UsersTestCase(JsonApiTestCase):
         )
         json = response.json()
         # check has correct error
-        self.assertHasError(json, "detail", "Not found.")
+        self.assertHasError(json, "", "Not found.")
 
     def test_user_with_perms_can_get_other_user(self):
         """Test user cannot get other user."""
@@ -100,7 +100,7 @@ class UsersTestCase(JsonApiTestCase):
         )
         json = response.json()
         # check has correct error
-        self.assertHasError(json, "detail", "Not found.")
+        self.assertHasError(json, "", "Not found.")
 
     def test_user_can_change_own_password(self):
         """Test user can change their own password."""
