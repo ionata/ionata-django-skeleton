@@ -1,5 +1,4 @@
 """Tests for sessions endpoint."""
-# pylint: disable=invalid-name
 from __future__ import annotations
 
 from rest_framework import status

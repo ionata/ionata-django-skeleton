@@ -21,7 +21,7 @@ RESET_TEMPLATES = {
 
 class _UuidPk:
     def __init__(self):
-        self.pk = str(uuid4())
+        self.pk = str(uuid4())  # pylint: disable=invalid-name
 
 
 class SessionSerializer(

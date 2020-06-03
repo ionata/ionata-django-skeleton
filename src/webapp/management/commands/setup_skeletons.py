@@ -131,7 +131,7 @@ class Command(BaseCommand):
         if settings.DEBUG and is_minio:
             configure_bucket(bucket_policy)
         elif not settings.DEBUG:
-            self._log(f"Skipping creating bucket policy since settings.DEBUG is False")
+            self._log("Skipping creating bucket policy since settings.DEBUG is False")
         elif not is_minio:
             self._log(
                 "Skipping creating bucket policy since "

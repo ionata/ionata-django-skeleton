@@ -49,10 +49,10 @@ class ApiSchema:
 class SchemaBase(type):
     """Ensure JsonApiSchema subclasses are properly configured."""
 
-    def __new__(mcs, *args, **kwargs):
+    def __new__(cls, *args, **kwargs):
         """Ensure JsonApiSchema subclasses are properly configured."""
-        schema = super().__new__(mcs, *args, **kwargs)
-        if schema.__name__ == "JsonApiSchema" and schema.__module__ == mcs.__module__:
+        schema = super().__new__(cls, *args, **kwargs)
+        if schema.__name__ == "JsonApiSchema" and schema.__module__ == cls.__module__:
             return schema
         required_attributes = [
             "resource_name",
@@ -132,9 +132,8 @@ class JsonApiSchema(metaclass=SchemaBase):
         return matcher
 
     @classmethod
-    def get_data(
-        cls, id: Optional[Any] = None, **kwargs  # pylint: disable=redefined-builtin
-    ) -> Dict[str, Any]:
+    # pylint: disable=redefined-builtin,invalid-name
+    def get_data(cls, id: Optional[Any] = None, **kwargs,) -> Dict[str, Any]:
         """Return JSON:API compatible payload."""
         data = cls.get_id(resource_name=cls.resource_name, id=id)
         attributes = {}
@@ -179,7 +178,7 @@ class JsonApiSchema(metaclass=SchemaBase):
     @classmethod
     def get_id(
         cls, resource_name: str, id: Optional[Any] = None
-    ):  # pylint: disable=no-self-use,redefined-builtin
+    ):  # pylint: disable=redefined-builtin,invalid-name
         """Return JSON:API compatible id."""
         data = {"type": resource_name}
         if id is not None:

@@ -25,7 +25,7 @@ sensitive_post_parameters_m = method_decorator(
 class _Session:
     def __init__(self, request):
         self.user = request.user
-        self.pk = request.user.pk
+        self.pk = request.user.pk  # pylint: disable=invalid-name
 
 
 class SessionView(ViewSetMixin, auth_views.LoginView):

@@ -18,7 +18,9 @@ scheme: Dict[str, Tuple[Type, Any]] = {
 }
 
 if DEBUG:
-    default_databse_url = "postgres://django:django@db:5432/django"
+    default_databse_url = (  # pylint: disable=invalid-name
+        "postgres://django:django@db:5432/django"
+    )
     scheme = {
         **scheme,
         **{
@@ -193,7 +195,7 @@ AXES_COOLOFF_TIME = timedelta(hours=1)
 env_axes_meta_precedence_order = env("AXES_META_PRECEDENCE_ORDER")
 if env_axes_meta_precedence_order is not None:
     AXES_META_PRECEDENCE_ORDER = env_axes_meta_precedence_order
-    remote_addr = "REMOTE_ADDR"
+    remote_addr = "REMOTE_ADDR"  # pylint: disable=invalid-name
     if remote_addr not in AXES_META_PRECEDENCE_ORDER:
         AXES_META_PRECEDENCE_ORDER += (remote_addr,)
 
