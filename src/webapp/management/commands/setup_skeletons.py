@@ -103,9 +103,12 @@ class Command(BaseCommand):
         super().__init__(*args, **kwargs)
         self.verbosity: Verbosity
 
-    def _log(self, message, level=Verbosity.normal):
+    def _log(self, message, level=Verbosity.normal, style=None):
         if self.verbosity >= level:
-            print(message)
+            output = message
+            if style is not None:
+                output = style(message)
+            self.stdout.write(output)
 
     def add_arguments(self, parser):
         """Add bucket-policy argument."""
@@ -123,7 +126,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         """Run the management command."""
         self.verbosity = Verbosity(options["verbosity"])
-        self._log(f"Running setup for {settings.PROJECT_NAME}")
+        self._log(f"Running setup for {settings.PROJECT_NAME}", style=self.style.NOTICE)
         bucket_policy = options["bucket_policy"]
         get_admin()
         get_site()
@@ -131,9 +134,13 @@ class Command(BaseCommand):
         if settings.DEBUG and is_minio:
             configure_bucket(bucket_policy)
         elif not settings.DEBUG:
-            self._log("Skipping creating bucket policy since settings.DEBUG is False")
+            self._log(
+                "Skipping creating bucket policy since settings.DEBUG is False",
+                style=self.style.NOTICE,
+            )
         elif not is_minio:
             self._log(
                 "Skipping creating bucket policy since "
-                'settings.AWS_S3_ENDPOINT_URL does not contain "minio"'
+                'settings.AWS_S3_ENDPOINT_URL does not contain "minio"',
+                style=self.style.NOTICE,
             )
