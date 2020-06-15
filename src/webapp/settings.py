@@ -247,6 +247,8 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
     ],
     "SEARCH_PARAM": "filter[search]",
+    "DEFAULT_PAGINATION_CLASS": "webapp.pagination.JsonApiPageNumberPagination",
+    "PAGE_SIZE": 100,
     "TEST_REQUEST_RENDERER_CLASSES": [
         "rest_framework_json_api.renderers.JSONRenderer",
         "rest_framework.renderers.MultiPartRenderer",

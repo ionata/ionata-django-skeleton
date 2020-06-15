@@ -78,6 +78,7 @@ class UserView(
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+    ordering = ["pk"]
 
     @sensitive_post_parameters_m
     def dispatch(self, request, *args, **kwargs):
