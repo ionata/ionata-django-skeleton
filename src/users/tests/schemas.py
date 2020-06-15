@@ -3,8 +3,8 @@ from typing import Dict, List, Union
 
 from hamcrest import instance_of
 
-from webapp.tests.matchers import IsJsonApiRelationship, IsResourceObject, is_to_one
-from webapp.tests.schemas import JsonApiSchema
+from webapp.test.matchers import IsJsonApiRelationship, IsResourceObject, is_to_one
+from webapp.test.schemas import JsonApiSchema
 
 
 class UsersSchema(JsonApiSchema):

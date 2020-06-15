@@ -4,7 +4,7 @@ from __future__ import annotations
 from rest_framework import status
 
 from users.tests import factories, schemas
-from webapp.tests.base import JsonApiTestCase
+from webapp.test.base import JsonApiTestCase
 
 
 class TestCase(JsonApiTestCase):

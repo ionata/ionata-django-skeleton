@@ -8,7 +8,7 @@ from django.utils.module_loading import import_string
 from hamcrest import any_of, empty, has_entries, only_contains
 from hamcrest.core.matcher import Matcher
 
-from webapp.tests.matchers import (
+from webapp.test.matchers import (
     IsDocument,
     IsJsonApiRelationship,
     IsResourceObject,

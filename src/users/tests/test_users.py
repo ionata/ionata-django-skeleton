@@ -5,7 +5,7 @@ from rest_framework import status
 
 from users.models import User
 from users.tests import factories, schemas
-from webapp.tests.base import JsonApiTestCase
+from webapp.test.base import JsonApiTestCase
 
 
 class TestCase(JsonApiTestCase):

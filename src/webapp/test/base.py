@@ -8,7 +8,7 @@ from hamcrest.core.base_matcher import BaseMatcher  # type: ignore
 from rest_framework import status, test
 
 from users.models import User
-from webapp.tests.schemas import JsonApiSchema
+from webapp.test.schemas import JsonApiSchema
 
 
 class APIClient(test.APIClient):

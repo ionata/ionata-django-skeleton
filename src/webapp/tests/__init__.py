@@ -1,1 +1,1 @@
-"""Tests module for webapp app."""
+"""Tests for webapp app."""
