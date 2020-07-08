@@ -17,6 +17,7 @@ ExecStart=/usr/local/bin/poetry run gunicorn \
   --max-requests=500 \
   --workers=5 \
   --bind=unix:/var/run/gunicorn/gunicorn.socket
+ExecReload=/bin/kill -s HUP $MAINPID
 
 [Install]
 WantedBy=multi-user.target
