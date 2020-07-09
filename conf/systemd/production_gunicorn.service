@@ -15,7 +15,8 @@ ExecStart=/usr/local/bin/poetry run gunicorn \
   --timeout=60 \
   --log-level=error \
   --max-requests=500 \
-  --workers=5 \
+  --workers=2 \
+  --threads=3 \
   --bind=unix:/var/run/gunicorn/gunicorn.socket
 ExecReload=/bin/kill -s HUP $MAINPID
 
