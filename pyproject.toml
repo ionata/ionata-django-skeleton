@@ -50,7 +50,7 @@ python-language-server = "^0.21.4"
 rope = "^0.11.0"
 # formatting
 black = { version = "^19.10b0", allow-prereleases = true }
-isort = { version = "^4.3.21", extras = ["pyproject"] }
+isort = { version = "^5.5.4", extras = ["pyproject"] }
 pre-commit = "^2.4.0"
 # testing
 factory_boy = "^2.12.0"
@@ -69,7 +69,6 @@ include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
 line_length = 88
-known_third_party = ["axes", "celery", "django", "environ", "factory", "hamcrest", "rest_auth", "rest_framework", "rest_framework_json_api", "storages"]
 
 [tool.pylint.master]
 load-plugins = "pylint_django"
