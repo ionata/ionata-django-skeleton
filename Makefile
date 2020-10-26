@@ -12,9 +12,5 @@ install :
 	$(POETRY_MANAGE) setup_skeletons
 	$(POETRY_MANAGE) collectstatic --no-input
 
-format :
-	$(POETRY_RUN) isort $(SRC_FILES)
-	$(POETRY_RUN) black $(SRC_FILES)
-
 test :
 	poetry run python -Wall /var/www/src/manage.py test $(TEST_OPTIONS) $(APPS)

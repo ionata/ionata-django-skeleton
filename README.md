@@ -69,4 +69,8 @@ If you don't have access, it's basically:
 * Be sure to maintain and regularly run the tests within the project.
   - `docker-compose run --rm backend make test`
 * Be sure to format all code before committing.
-  - `docker-compose run --rm backend make format`
+  - Ensure the pre-commit git hook is installed
+    (within the environment from where git is run):
+    - `pre-commit install`
+  - Running `git commit` will now cause the pre-commit hook to run
+    before committing is possible.
