@@ -133,7 +133,7 @@ class JsonApiSchema(metaclass=SchemaBase):
 
     @classmethod
     # pylint: disable=redefined-builtin,invalid-name
-    def get_data(cls, id: Optional[Any] = None, **kwargs,) -> Dict[str, Any]:
+    def get_data(cls, id: Optional[Any] = None, **kwargs) -> Dict[str, Any]:
         """Return JSON:API compatible payload."""
         data = cls.get_id(resource_name=cls.resource_name, id=id)
         attributes = {}
