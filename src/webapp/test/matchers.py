@@ -336,7 +336,7 @@ class IsDocument(BaseMatcher):
                     mismatch_description.append(
                         f"include at index {index} does not match. Failed because: "
                     )
-                    include_matcher.describe_mismatch(include, self.included_matchers)
+                    include_matcher.describe_mismatch(include, mismatch_description)
                     append_item(include, mismatch_description)
                     return False
         return True
