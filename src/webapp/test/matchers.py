@@ -207,7 +207,9 @@ class IsToOne(IsResourceIdentifierObject):
         if "data" not in item:
             mismatch_description.append('missing key "data"')
             return False
-        if not self.optional and not item["data"]:
+        if item["data"] is None:
+            if self.optional:
+                return True
             mismatch_description.append("non-optional to-one relationship is ")
             mismatch_description.append_description_of(item["data"])
             return False
