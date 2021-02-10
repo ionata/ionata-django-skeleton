@@ -90,6 +90,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sites",
     "axes",
+    # Swagger
+    "drf_yasg"
 ]
 
 MIDDLEWARE = [

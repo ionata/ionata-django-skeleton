@@ -26,9 +26,10 @@ djangorestframework = "~=3.10.3" # does not follow semver
 djangorestframework-filters = ">=1.0.0.dev0"
 djangorestframework-jsonapi = "^3.1"
 gunicorn = "^19.9"
-psycopg2 = "^2.8"
 python-dateutil = "^2.8"
 pytz = "*"
+psycopg2-binary = "^2.8.6"
+drf-yasg = "^1.20.0"
 
 [tool.poetry.dev-dependencies]
 # debugging
