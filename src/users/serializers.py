@@ -25,9 +25,7 @@ class _UuidPk:
 
 
 class SessionSerializer(
-    serializers.IncludedResourcesValidationMixin,
-    serializers.SparseFieldsetsMixin,
-    serializers.Serializer,
+    serializers.Serializer
 ):
     """Session serializer."""
 

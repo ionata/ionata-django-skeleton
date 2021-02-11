@@ -7,6 +7,8 @@ from rest_framework.viewsets import ViewSetMixin  # type: ignore
 
 from users import views as user_views  # type: ignore
 
+from .views import schema_view
+
 # Add viewsets here. The first argument is the name and the URL regex
 routes: List[Tuple[str, ViewSetMixin]] = [
     ("users", user_views.UserView),
@@ -21,4 +23,7 @@ for regex, viewset in routes:
     v1_router.register(regex, viewset, basename=regex)
 
 
-api = [path("", include(v1_router.urls))]
+api = [
+    path("", include(v1_router.urls)),
+    path("schema", schema_view, name="openapi-schema")
+]
