@@ -19,7 +19,9 @@ services:
     networks: { default: { aliases: ["minio", "min.io"] } }
     ports: ["9000:9000"]
   backend: &backend
-    image: "ionata/django-backend"
+    build:
+      context: .
+      dockerfile: "conf/docker/Dockerfile"
     command: "poetry run django-admin runserver_plus 0.0.0.0:8000 --nopin"
     depends_on: ["db", "minio", "redis"]
     env_file: ".env"
