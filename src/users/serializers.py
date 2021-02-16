@@ -24,11 +24,7 @@ class _UuidPk:
         self.pk = str(uuid4())  # pylint: disable=invalid-name
 
 
-class SessionSerializer(
-    serializers.IncludedResourcesValidationMixin,
-    serializers.SparseFieldsetsMixin,
-    serializers.Serializer,
-):
+class SessionSerializer(serializers.Serializer):
     """Session serializer."""
 
     user = serializers.ResourceRelatedField(model=User, read_only=True)
