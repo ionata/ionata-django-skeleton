@@ -28,7 +28,7 @@ djangorestframework-jsonapi = "^4.0.0"
 gunicorn = "^19.9"
 psycopg2 = "^2.8"
 python-dateutil = "^2.8"
-pytz = "*"
+pytz = "^2021.1"
 
 [tool.poetry.dev-dependencies]
 # debugging
