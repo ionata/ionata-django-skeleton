@@ -32,6 +32,7 @@
     - `AXES_REDIS_URL`
     - `AXES_KEY_PREFIX`
     - `AXES_META_PRECEDENCE_ORDER`
+    - `SENTRY_DSN`
 * **Important note:** Docker Compose reads `.env` files poorly. You will need to
   remove the double quotes from around the values being assigned. For example,
   - replace: `DJANGO_SETTINGS_MODULE="webapp.settings"`
