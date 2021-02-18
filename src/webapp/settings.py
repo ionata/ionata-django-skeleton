@@ -3,7 +3,9 @@ from datetime import timedelta
 from typing import Any, Dict, List, Tuple, Type
 from urllib.parse import urlparse
 
+import sentry_sdk
 from environ import Env
+from sentry_sdk.integrations.django import DjangoIntegration
 
 env = Env()
 
@@ -15,6 +17,8 @@ default_databse_url = env.NOTSET
 scheme: Dict[str, Tuple[Type, Any]] = {
     "CELERY_BROKER_URL": (str, "redis://"),
     "AXES_META_PRECEDENCE_ORDER": (tuple, ("HTTP_X_FORWARDED_FOR", "X_FORWARDED_FOR")),
+    "SENTRY_ENABLED": (bool, True),
+    "SENTRY_ENVIRONMENT": (str, "production"),
 }
 
 if DEBUG:
@@ -33,10 +37,20 @@ if DEBUG:
             "AXES_KEY_PREFIX": (str, "axes"),
             "AXES_REDIS_URL": (str, "rediscache://redis/1"),
             "SECRET_KEY": (str, "super_secret_secret_key"),
+            "SENTRY_ENABLED": (bool, False),
         },
     }
 
 env = Env(**scheme)
+
+# Sentry
+if env.bool("SENTRY_ENABLED"):
+    sentry_sdk.init(
+        dsn=env("SENTRY_DSN"),
+        integrations=[DjangoIntegration()],
+        environment=env("SENTRY_ENVIRONMENT"),
+        send_default_pii=True,
+    )
 
 # Core
 # TODO: set the PROJECT_NAME setting - do not include spaces in this name
