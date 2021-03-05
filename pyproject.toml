@@ -76,5 +76,5 @@ disable = "bad-continuation,too-many-ancestors,too-few-public-methods"
 enable = "useless-suppression"
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
