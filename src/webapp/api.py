@@ -24,5 +24,5 @@ for regex, viewset in routes:
 
 api = [
     path("", include(v1_router.urls)),
-    path("schema", schema_view, name="openapi-schema"),
+    path("schema/", schema_view, name="openapi-schema"),
 ]

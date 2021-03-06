@@ -32,6 +32,7 @@ class SessionView(ViewSetMixin, auth_views.LoginView):
     """ViewSet for sessions endpoint."""
 
     resource_name = "sessions"
+    filter_backends = []
 
     def check_authentication(self, request):
         """Raise NotAuthenticated exception if not authenticated."""
