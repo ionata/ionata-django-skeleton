@@ -43,7 +43,7 @@ class BaseTestCase(test.APITestCase):
     def auth(self, user: Optional[User], token: Optional[str] = None):
         """Authenticate as the given user."""
         self.current_user = user
-        self.current_token = user
+        self.current_token = token
         self.client.force_authenticate(user, token)  # pylint: disable=no-member
 
     def _check_response(
