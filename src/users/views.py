@@ -2,6 +2,7 @@
 from typing import List, Type
 
 import dj_rest_auth.views
+from django.contrib.auth import logout
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.debug import sensitive_post_parameters
@@ -45,7 +46,11 @@ class SessionView(ViewSetMixin, dj_rest_auth.views.LoginView):
     def delete(self, request, *args, **kwargs):
         """Logout on delete."""
         self.check_authentication(request)
-        dj_rest_auth.views.LogoutView().logout(request)
+        # only delete the auth token if it was used for authentication
+        if request.auth is not None:
+            request.auth.delete()
+        # issue a django logout - i.e. flush any django sessions
+        logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     # pylint: disable=unused-argument

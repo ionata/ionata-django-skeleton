@@ -61,15 +61,18 @@ class TestCase(JsonApiTestCase):
             json, "data", "Authentication credentials were not provided."
         )
 
-    def test_user_delete(self):
-        """User can delete session."""
+    def test_user_delete_token(self):
+        """User can delete token."""
         email = "user@example.com"
         password = "pass"
         factories.UserFactory(email=email, password=password)
         data = {"data": self.schema.get_data(email=email, password=password)}
-        token_json = self.post(f"/{self.resource_name}/", data=data).json()
-        token = token_json["data"]["attributes"]["token"]
-        # check the token is valid
+        token = self.post(
+            f"/{self.resource_name}/",
+            data=data,
+            asserted_status=status.HTTP_201_CREATED,
+            asserted_schema=self.schema.get_matcher(),
+        ).json()["data"]["attributes"]["token"]
         self.client.credentials(  # pylint: disable=no-member
             HTTP_AUTHORIZATION=f"Token {token}"
         )
@@ -85,6 +88,43 @@ class TestCase(JsonApiTestCase):
         # check the token is no longer valid
         self.get(
             f"/{self.resource_name}/", asserted_status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    def test_user_delete_keep_token(self):
+        """User can delete session and token persists."""
+        email = "user@example.com"
+        password = "pass"
+        user = factories.UserFactory(email=email, password=password)
+        data = {"data": self.schema.get_data(email=email, password=password)}
+        token = self.post(
+            f"/{self.resource_name}/",
+            data=data,
+            asserted_status=status.HTTP_201_CREATED,
+            asserted_schema=self.schema.get_matcher(),
+        ).json()["data"]["attributes"]["token"]
+        self.auth(user)
+        self.get(
+            f"/{self.resource_name}/",
+            asserted_status=status.HTTP_200_OK,
+            asserted_schema=self.schema.get_matcher(many=True, exclude=["token"]),
+        )
+        # logout - i.e. flush the session
+        self.delete(
+            f"/{self.resource_name}/", asserted_status=status.HTTP_204_NO_CONTENT
+        )
+        self.auth(None)
+        # check client is not currently authed
+        self.get(
+            f"/{self.resource_name}/", asserted_status=status.HTTP_401_UNAUTHORIZED
+        )
+        # check the token is still valid
+        self.client.credentials(  # pylint: disable=no-member
+            HTTP_AUTHORIZATION=f"Token {token}"
+        )
+        self.get(
+            f"/{self.resource_name}/",
+            asserted_status=status.HTTP_200_OK,
+            asserted_schema=self.schema.get_matcher(many=True, exclude=["token"]),
         )
 
     def test_include_user(self):
