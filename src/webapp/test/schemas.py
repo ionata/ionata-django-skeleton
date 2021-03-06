@@ -164,8 +164,8 @@ class JsonApiSchema(metaclass=SchemaBase):
                 if isinstance(include, str):
                     try:
                         matcher = import_string(matcher)
-                    except ImportError:
-                        raise ImproperlyConfigured(exception_msg)
+                    except ImportError as error:
+                        raise ImproperlyConfigured(exception_msg) from error
                 if not isinstance(matcher, Matcher):
                     if hasattr(matcher, "get_matcher"):
                         matcher = matcher.get_matcher(as_document=False)

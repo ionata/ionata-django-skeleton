@@ -53,6 +53,7 @@ class IsResourceIdentifierObject(BaseMatcher):
     def _matches(self, item):
         """Pylint expects this to be overridden."""
 
+    # pylint: disable=too-many-return-statements
     def matches(self, item, mismatch_description=None):
         """Return whether the item is a resource identifier."""
         if mismatch_description is None:

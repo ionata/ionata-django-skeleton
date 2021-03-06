@@ -40,17 +40,17 @@ ipython = "^7.2"
 ptpython = "^2.0"
 # linting
 autopep8 = "^1.4"
-django-stubs = "^1.5"
-mypy = "^0.770"
+django-stubs = "^1.7.0"
+mypy = "^0.790"
 pycodestyle = "^2.4"
 pydocstyle = "^5.0.2"
-pylint = "^2.5.2"
-pylint-django = "^2.0"
+pylint = "^2.7.2"
+pylint-django = "^2.4.2"
 rope = "^0.11.0"
 # formatting
 black = { version = "^19.10b0", allow-prereleases = true }
 isort = { version = "^5.5.4", extras = ["pyproject"] }
-pre-commit = "^2.4.0"
+pre-commit = "^2.10.1"
 # testing
 factory_boy = "^2.12.0"
 pyhamcrest = "^1.9"
@@ -73,7 +73,7 @@ line_length = 88
 load-plugins = "pylint_django"
 
 [tool.pylint."messages control"]
-disable = "bad-continuation,too-many-ancestors,too-few-public-methods"
+disable = "bad-continuation,too-many-ancestors,too-few-public-methods,duplicate-code"
 enable = "useless-suppression"
 
 [build-system]

@@ -26,8 +26,8 @@ def get_admin():
     try:
         values = {username: admin[username], "defaults": defaults}
         user, new = model.objects.get_or_create(**values)
-    except IntegrityError:
-        raise AttributeError("Admin user not found or able to be created.")
+    except IntegrityError as error:
+        raise AttributeError("Admin user not found or able to be created.") from error
     if new:
         user.set_password(admin["password"])
         user.save()
@@ -65,10 +65,10 @@ def create_bucket_policy(storage: MediaS3, policy_path: str):
 class Verbosity(Enum):
     """Verbosity enum."""
 
-    minimal = 0
-    normal = 1
-    verbose = 2
-    very_verbose = 3
+    MINIMAL = 0
+    NORMAL = 1
+    VERBOSE = 2
+    VERY_VERBOSE = 3
 
     def __ge__(self, other):
         """Return true if this instance is greater than or equal to other."""
@@ -103,7 +103,7 @@ class Command(BaseCommand):
         super().__init__(*args, **kwargs)
         self.verbosity: Verbosity
 
-    def _log(self, message, level=Verbosity.normal, style=None):
+    def _log(self, message, level=Verbosity.NORMAL, style=None):
         if self.verbosity >= level:
             output = message
             if style is not None:

@@ -53,6 +53,7 @@ if env.bool("SENTRY_ENABLED"):
     )
 
 # Core
+# pylint: disable=fixme
 # TODO: set the PROJECT_NAME setting - do not include spaces in this name
 PROJECT_NAME: str = "<INSERT_PROJECT_NAME_HERE>"
 SECRET_KEY: str = env("SECRET_KEY")

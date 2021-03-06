@@ -200,4 +200,4 @@ class UserSerializer(serializers.ModelSerializer):
         try:
             validate_password(password)
         except DjangoValidationError as error:
-            raise ValidationError({"password": error.messages})
+            raise ValidationError({"password": error.messages}) from error

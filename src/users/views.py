@@ -1,4 +1,6 @@
 """Views for the users app."""
+from typing import List, Type
+
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.debug import sensitive_post_parameters
@@ -32,7 +34,7 @@ class SessionView(ViewSetMixin, auth_views.LoginView):
     """ViewSet for sessions endpoint."""
 
     resource_name = "sessions"
-    filter_backends = []
+    filter_backends: List[Type] = []
 
     def check_authentication(self, request):
         """Raise NotAuthenticated exception if not authenticated."""

@@ -14,6 +14,7 @@ class MediaS3(s3boto3.S3Boto3Storage):  # pylint: disable=abstract-method
     """The default_storage for the project."""
 
     location = settings.MEDIA_URL.lstrip("/")
+    bucket_name: str
 
     def create_bucket(self):
         """Ensure the bucket exists when in debug.
@@ -38,7 +39,7 @@ class MediaS3(s3boto3.S3Boto3Storage):  # pylint: disable=abstract-method
                     "region than we are connecting to. Set "
                     "the region to connect to by setting "
                     "AWS_S3_REGION_NAME to the correct region."
-                )
+                ) from err
 
             if err.response["ResponseMetadata"]["HTTPStatusCode"] == 404:
                 # Notes: When using the us-east-1 Standard endpoint, you can create

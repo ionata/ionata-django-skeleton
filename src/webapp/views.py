@@ -1,8 +1,11 @@
 """View for openapi schema."""
+# pylint: disable=no-name-in-module
 
 from rest_framework import permissions
 from rest_framework.schemas import get_schema_view
-from rest_framework_json_api.schemas.openapi import SchemaGenerator
+from rest_framework_json_api.schemas.openapi import (  # pylint: disable=syntax-error
+    SchemaGenerator,
+)
 
 from webapp import settings
 

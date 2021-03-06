@@ -7,20 +7,37 @@ repos:
       - id: check-yaml
       - id: check-toml
       - id: check-added-large-files
-  - repo: https://github.com/timothycrosley/isort
-    rev: 5.5.4
-    hooks:
-      - id: isort
-        additional_dependencies:
-          - toml
-        args:
-          - src
-  - repo: https://github.com/psf/black
-    rev: 19.10b0
-    hooks:
-      - id: black
-  - repo: https://github.com/PyCQA/pydocstyle
-    rev: 5.0.2
+  - repo: local
     hooks:
       - id: pydocstyle
+        name: pydocstyle
+        entry: pydocstyle
+        language: system
+        types: [python]
         exclude: ".*/migrations/.*py"
+      - id: isort
+        name: isort
+        entry: isort
+        language: system
+        types: [python]
+        args:
+          - src
+      - id: black
+        name: black
+        entry: black
+        language: system
+        types: [python]
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        exclude: ".*/migrations/.*py"
+      - id: mypy
+        name: mypy
+        entry: mypy
+        language: system
+        types: [python]
+        exclude: ".*/migrations/.*py"
+        args:
+          - --ignore-missing-imports
