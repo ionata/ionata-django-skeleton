@@ -2,12 +2,12 @@
 # pylint: disable=abstract-method
 from uuid import uuid4
 
+from dj_rest_auth import serializers as auth_serializers
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.http import urlsafe_base64_encode as b64e
 from django.utils.translation import ugettext_lazy as _
-from rest_auth import serializers as auth_serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework_json_api import serializers
 

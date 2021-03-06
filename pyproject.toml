@@ -9,6 +9,7 @@ authors = ["Ionata <webmaster@ionata.com.au>"]
 python = "^3.6.1"
 celery = { version = "^4.3", extras = ["redis"] }
 celery-prometheus-exporter = "^1.7"
+dj-rest-auth = "^2.1.3"
 django = "^2.2"
 django-allauth = "^0.39.1"
 django-anymail = { version = "^6.1", extras = ["mailgun"] }
@@ -20,7 +21,6 @@ django-environ = "^0.4.5"
 django-extensions = "^2.2"
 django-filter = "^2.2"
 django-redis = "~=4.10.0" # does not follow semver
-django-rest-auth = "^0.9.5"
 django-storages = { version = "^1.7", extras = ["boto3"] }
 djangorestframework = "~=3.12.2" # does not follow semver
 djangorestframework-filters = ">=1.0.0.dev0"

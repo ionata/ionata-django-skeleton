@@ -234,7 +234,7 @@ LOGIN_REDIRECT_URL = "/backend/api/v1/"
 INSTALLED_APPS += [
     "rest_framework",
     "rest_framework.authtoken",
-    "rest_auth",
+    "dj_rest_auth",
     "allauth",
     "django_filters",
 ]
