@@ -4,7 +4,7 @@ import django.contrib.auth.forms
 from django import forms
 from django.contrib import admin
 from django.contrib.auth import get_user_model, password_validation
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class UserChangeForm(django.contrib.auth.forms.UserChangeForm):

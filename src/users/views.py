@@ -3,7 +3,7 @@ from typing import List, Type
 
 import dj_rest_auth.views
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.debug import sensitive_post_parameters
 from rest_framework import mixins, status
 from rest_framework.exceptions import NotAuthenticated

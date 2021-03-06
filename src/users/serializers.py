@@ -7,7 +7,7 @@ import django.core.exceptions
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
 from django.utils.http import urlsafe_base64_encode
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError
 from rest_framework_json_api import serializers
 
