@@ -2,11 +2,11 @@
 # pylint: disable=abstract-method
 from uuid import uuid4
 
-from dj_rest_auth import serializers as auth_serializers
+import dj_rest_auth.serializers
+import django.core.exceptions
 from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError as DjangoValidationError
-from django.utils.http import urlsafe_base64_encode as b64e
+from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import ValidationError
 from rest_framework_json_api import serializers
@@ -38,14 +38,14 @@ class SessionSerializer(serializers.Serializer):
 class TokenSerializer(
     serializers.IncludedResourcesValidationMixin,
     serializers.SparseFieldsetsMixin,
-    auth_serializers.TokenSerializer,
+    dj_rest_auth.serializers.TokenSerializer,
 ):
     """Set the pk of the instance to be the user's pk."""
 
     token = serializers.CharField(read_only=True, source="_backup_key")
     user = serializers.ResourceRelatedField(read_only=True)
 
-    class Meta(auth_serializers.TokenSerializer.Meta):
+    class Meta(dj_rest_auth.serializers.TokenSerializer.Meta):
         """Serializer meta information."""
 
         fields = ["token", "user"]
@@ -66,7 +66,7 @@ class TokenSerializer(
 class LoginSerializer(
     serializers.IncludedResourcesValidationMixin,
     serializers.SparseFieldsetsMixin,
-    auth_serializers.LoginSerializer,
+    dj_rest_auth.serializers.LoginSerializer,
 ):
     """Login serializer that removes case."""
 
@@ -83,7 +83,7 @@ class LoginSerializer(
 class PasswordResetSerializer(
     serializers.IncludedResourcesValidationMixin,
     serializers.SparseFieldsetsMixin,
-    auth_serializers.PasswordResetSerializer,
+    dj_rest_auth.serializers.PasswordResetSerializer,
 ):
     """Password reset serializer that removes case."""
 
@@ -95,11 +95,7 @@ class PasswordResetSerializer(
     def get_email_context(self):
         """Casefold the email address before encoding it."""
         email = self.data["email"].casefold().encode("utf-8")
-        email_encoded = b64e(email)
-        # As of Django 2.2 urlsafe_base64_encode returns a str instead of bytes
-        # https://github.com/django/django/commit/c82893c
-        if isinstance(email_encoded, bytes):
-            email_encoded = email_encoded.decode("utf-8")
+        email_encoded = urlsafe_base64_encode(email)
         return {"email_encoded": email_encoded, "project_name": settings.PROJECT_NAME}
 
     def get_email_options(self):
@@ -124,7 +120,7 @@ class PasswordResetSerializer(
 class PasswordResetConfirmSerializer(
     serializers.IncludedResourcesValidationMixin,
     serializers.SparseFieldsetsMixin,
-    auth_serializers.PasswordResetConfirmSerializer,
+    dj_rest_auth.serializers.PasswordResetConfirmSerializer,
 ):
     """Make the fields write only."""
 
@@ -199,5 +195,5 @@ class UserSerializer(serializers.ModelSerializer):
     def _validate_password(self, password):  # pylint: disable=no-self-use
         try:
             validate_password(password)
-        except DjangoValidationError as error:
+        except django.core.exceptions.ValidationError as error:
             raise ValidationError({"password": error.messages}) from error

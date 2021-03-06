@@ -1,7 +1,7 @@
 """Views for the users app."""
 from typing import List, Type
 
-from dj_rest_auth import views as auth_views
+import dj_rest_auth.views
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.debug import sensitive_post_parameters
@@ -30,7 +30,7 @@ class _Session:
         self.pk = request.user.pk  # pylint: disable=invalid-name
 
 
-class SessionView(ViewSetMixin, auth_views.LoginView):
+class SessionView(ViewSetMixin, dj_rest_auth.views.LoginView):
     """ViewSet for sessions endpoint."""
 
     resource_name = "sessions"
@@ -45,7 +45,7 @@ class SessionView(ViewSetMixin, auth_views.LoginView):
     def delete(self, request, *args, **kwargs):
         """Logout on delete."""
         self.check_authentication(request)
-        auth_views.LogoutView().logout(request)
+        dj_rest_auth.views.LogoutView().logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     # pylint: disable=unused-argument
@@ -119,7 +119,7 @@ class UserView(
 
 
 class PasswordResetView(
-    mixins.CreateModelMixin, ViewSetMixin, auth_views.PasswordResetView
+    mixins.CreateModelMixin, ViewSetMixin, dj_rest_auth.views.PasswordResetView
 ):
     """Request a password reset email."""
 
@@ -129,7 +129,7 @@ class PasswordResetView(
 
 
 class PasswordResetConfirmView(
-    mixins.CreateModelMixin, ViewSetMixin, auth_views.PasswordResetConfirmView
+    mixins.CreateModelMixin, ViewSetMixin, dj_rest_auth.views.PasswordResetConfirmView
 ):
     """Reset the password for a user."""
 

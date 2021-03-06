@@ -1,24 +1,23 @@
 """Replace the existing user class with our own in the admin."""
-from django import forms  # type: ignore
-from django.contrib import admin  # type: ignore
-from django.contrib.auth import admin as auth_admin  # type: ignore
-from django.contrib.auth import forms as auth_forms  # type: ignore
-from django.contrib.auth import get_user_model  # type: ignore
-from django.contrib.auth import password_validation  # type: ignore
-from django.utils.translation import ugettext_lazy as _  # type: ignore
+import django.contrib.auth.admin
+import django.contrib.auth.forms
+from django import forms
+from django.contrib import admin
+from django.contrib.auth import get_user_model, password_validation
+from django.utils.translation import ugettext_lazy as _
 
 
-class UserChangeForm(auth_forms.UserChangeForm):
+class UserChangeForm(django.contrib.auth.forms.UserChangeForm):
     """Form for modifying users in admin."""
 
-    class Meta(auth_forms.UserChangeForm.Meta):
+    class Meta(django.contrib.auth.forms.UserChangeForm.Meta):
         """Supply the meta parameters."""
 
         model = get_user_model()
         fields = "__all__"
 
 
-class UserCreationForm(auth_forms.UserCreationForm):
+class UserCreationForm(django.contrib.auth.forms.UserCreationForm):
     """Form to create a user with no privileges from an email and password."""
 
     error_messages = {
@@ -60,7 +59,7 @@ _add_fieldsets = {"classes": ["wide"], "fields": ["email", "password1", "passwor
 
 
 @admin.register(get_user_model())
-class UserAdmin(auth_admin.UserAdmin):
+class UserAdmin(django.contrib.auth.admin.UserAdmin):
     """The admin interface for the user model."""
 
     form = UserChangeForm
