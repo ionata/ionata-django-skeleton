@@ -1,35 +1,28 @@
 """Root url config."""
-from django.apps import apps  # type: ignore
-from django.conf import settings  # type: ignore
-from django.contrib import admin  # type: ignore
-from django.urls import include, path  # type: ignore
+from typing import List, Tuple
 
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+from rest_framework.viewsets import ViewSetMixin
 
-def _static_urls() -> list:
-    if not settings.DEBUG:
-        return []
-    # pylint: disable=import-outside-toplevel
-    from django.conf.urls.static import static  # type: ignore
-    from django.contrib.staticfiles import urls  # type: ignore
+import users.views
+from webapp.views import schema_view
 
-    _static = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    return urls.staticfiles_urlpatterns() + _static
+# Add viewsets here. The first argument is the name and the URL regex
+routes: List[Tuple[str, ViewSetMixin]] = [
+    ("users", users.views.UserView),
+    ("sessions", users.views.SessionView),
+    ("password-resets", users.views.PasswordResetView),
+    ("password-reset-confirmations", users.views.PasswordResetConfirmView),
+]
 
+v1_router = DefaultRouter()
 
-def _djdt_urls() -> list:
-    if apps.is_installed("debug_toolbar"):
-        import debug_toolbar  # pylint: disable=import-outside-toplevel
-
-        return debug_toolbar.urls
-    return []
-
-
-def _api_urls() -> list:
-    if apps.is_installed("rest_framework"):
-        from webapp import api  # pylint: disable=import-outside-toplevel
-
-        return api.api
-    return []
+for regex, viewset in routes:
+    v1_router.register(regex, viewset, basename=regex)
 
 
 urlpatterns = [
@@ -37,9 +30,17 @@ urlpatterns = [
         "backend/",
         include(
             [
-                path("", include(_static_urls())),
-                path("__debug__/", include(_djdt_urls())),
-                path("api/v1/", include(_api_urls())),
+                # these are only added in development
+                *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+                path(
+                    "api/v1/",
+                    include(
+                        [
+                            *v1_router.urls,
+                            path("schema/", schema_view, name="openapi-schema"),
+                        ]
+                    ),
+                ),
                 path("django-admin/", admin.site.urls),
             ]
         ),
