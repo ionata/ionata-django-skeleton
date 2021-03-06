@@ -3,6 +3,7 @@
 from rest_framework import permissions
 from rest_framework.schemas import get_schema_view
 from rest_framework_json_api.schemas.openapi import SchemaGenerator
+
 from webapp import settings
 
 schema_view = get_schema_view(
