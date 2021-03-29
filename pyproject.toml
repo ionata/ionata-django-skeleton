@@ -7,6 +7,7 @@ authors = ["Ionata <webmaster@ionata.com.au>"]
 
 [tool.poetry.dependencies]
 python = "^3.6.1"
+PyYAML = "^5.4.1"
 celery = { version = "^4.3", extras = ["redis"] }
 celery-prometheus-exporter = "^1.7"
 dj-rest-auth = "^2.1.3"
