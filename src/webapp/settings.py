@@ -67,7 +67,7 @@ url = urlparse(SITE_URL)
 ADMINS: List[Tuple[str, str]] = [("webmaster", "webmaster@ionata.com.au")]
 MANAGERS = ADMINS
 ADMIN_USER = env.dict("ADMIN_USER")
-ALLOWED_HOSTS: List[str] = [url.netloc]
+ALLOWED_HOSTS: List[str] = [url.hostname or url.netloc]
 CORS_ORIGIN_WHITELIST: List[str] = [SITE_URL]
 
 
