@@ -8,13 +8,16 @@ User=www-data
 Group=www-data
 RuntimeDirectory=celerybeat
 EnvironmentFile=/var/www/.env
+Environment="DJANGO_SETTINGS_MODULE=webapp.settings"
+Environment="PYTHONPATH=/var/www/src/"
+Environment="DEBUG=false"
 WorkingDirectory=/var/www
 Restart=always
-ExecStart=/var/www/.venv/bin/python -m celery beat \
+ExecStart=/usr/local/bin/ssm2env "/var/www/.venv/bin/python -m celery beat \
   --app webapp \
   --loglevel error \
-  --schedule /var/run/celerybeat/celerybeat_schedule \
-  --pidfile /var/run/celerybeat/celerybeat.pid
+  --scheduler django_celery_beat.schedulers:DatabaseScheduler \
+  --pidfile /var/run/celerybeat/celerybeat.pid"
 
 [Install]
 WantedBy=multi-user.target

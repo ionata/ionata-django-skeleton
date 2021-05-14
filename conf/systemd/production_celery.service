@@ -8,13 +8,16 @@ User=www-data
 Group=www-data
 RuntimeDirectory=celery
 EnvironmentFile=/var/www/.env
+Environment="DJANGO_SETTINGS_MODULE=webapp.settings"
+Environment="PYTHONPATH=/var/www/src/"
+Environment="DEBUG=false"
 WorkingDirectory=/var/www
 Restart=always
-ExecStart=/var/www/.venv/bin/python -m celery worker \
+ExecStart=/usr/local/bin/ssm2env "/var/www/.venv/bin/python -m celery worker \
   --app webapp \
   --loglevel error \
   --pidfile /var/run/celery/celery.pid \
-  --task-events
+  --task-events"
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
 

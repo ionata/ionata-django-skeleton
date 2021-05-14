@@ -8,8 +8,11 @@ User=www-data
 Group=www-data
 RuntimeDirectory=gunicorn
 EnvironmentFile=/var/www/.env
+Environment="DJANGO_SETTINGS_MODULE=webapp.settings"
+Environment="PYTHONPATH=/var/www/src/"
+Environment="DEBUG=false"
 WorkingDirectory=/var/www
-ExecStart=/usr/local/bin/poetry run gunicorn \
+ExecStart=/usr/local/bin/ssm2env "/var/www/.venv/bin/gunicorn \
   webapp.wsgi:application \
   --access-logfile=- \
   --timeout=60 \
@@ -17,7 +20,7 @@ ExecStart=/usr/local/bin/poetry run gunicorn \
   --max-requests=500 \
   --workers=2 \
   --threads=3 \
-  --bind=unix:/var/run/gunicorn/gunicorn.socket
+  --bind=unix:/var/run/gunicorn/gunicorn.socket"
 ExecReload=/bin/kill -s HUP $MAINPID
 
 [Install]
