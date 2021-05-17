@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:20.04
 # Set environment variables
 ENV \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -18,29 +18,38 @@ RUN apt update && \
 # System deps
 RUN apt update && \
     apt install --no-install-recommends -y \
+    # core
+    curl \
+    build-essential \
+    g++-10 \
+    git \
+    locales \
+    # python
     python3.7 \
     python3.7-dev \
+    python3.7-distutils \
     python3.7-venv \
-    build-essential \
-    gettext \
-    libpq-dev \
+    # image processing
+    libjpeg-dev \
+    zlib1g-dev \
+    # postgres
     postgresql-client \
-    mysql-client \
-    curl \
+    binutils \
+    gdal-bin \
+    libpq-dev \
+    libproj-dev \
+    libgeos-dev \
+    postgis \
     # Cleaning cache:
     && apt autoremove -y && apt clean -y && rm -rf /var/lib/apt/lists/*
-# Install WKHTMLTOPDF
-RUN curl --show-error --location \
-    https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.xenial_amd64.deb \
-    --output /tmp/wkhtmltox_0.12.6-1.xenial_amd64.deb && \
-    apt update && \
-    apt install -y --no-install-recommends \
-    /tmp/wkhtmltox_0.12.6-1.xenial_amd64.deb && \
-    # Cleaning cache:
-    apt autoremove -y && apt clean -y && rm -rf /var/lib/apt/lists/* && \
-    rm /tmp/wkhtmltox_0.12.6-1.xenial_amd64.deb
 # Install Poetry
 RUN python3.7 -mvenv /usr/local/include/poetry && \
     /usr/local/include/poetry/bin/pip install poetry && \
     ln -s /usr/local/include/poetry/bin/poetry /usr/local/bin/poetry
 WORKDIR /var/www
+
+# Copy only requirements, to cache them in docker layer
+COPY ./poetry.lock ./pyproject.toml /var/www/
+
+# Project initialization:
+RUN python3.7 -mvenv /var/www/.venv && poetry install --no-interaction --no-ansi

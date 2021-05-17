@@ -38,6 +38,7 @@ if DEBUG:
             "AXES_REDIS_URL": (str, "rediscache://redis/1"),
             "SECRET_KEY": (str, "super_secret_secret_key"),
             "SENTRY_ENABLED": (bool, False),
+            "SITE_URL": (str, "http://localhost:8000"),
         },
     }
 
