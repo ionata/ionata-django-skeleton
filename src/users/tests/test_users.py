@@ -1,6 +1,8 @@
 """Tests for users endpoint."""
 from __future__ import annotations
 
+from uuid import uuid4
+
 from rest_framework import status
 
 from users.models import User
@@ -15,7 +17,7 @@ class TestCase(JsonApiTestCase):
 
     def test_anon_create(self):
         """Unauthenticated users can create users."""
-        email = "test@example.com"
+        email = f"test+{uuid4()}@example.com"
         password = "hellopass123"
         data = {"data": self.schema.get_data(email=email, password=password)}
         response = self.post(

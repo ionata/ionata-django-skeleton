@@ -13,8 +13,9 @@ Environment="PYTHONPATH=/var/www/src/"
 Environment="DEBUG=false"
 WorkingDirectory=/var/www
 Restart=always
-ExecStart=/usr/local/bin/ssm2env "/var/www/.venv/bin/python -m celery beat \
+ExecStart=/usr/local/bin/ssm2env "/var/www/.venv/bin/python -m celery \
   --app webapp \
+  beat \
   --loglevel error \
   --scheduler django_celery_beat.schedulers:DatabaseScheduler \
   --pidfile /var/run/celerybeat/celerybeat.pid"
