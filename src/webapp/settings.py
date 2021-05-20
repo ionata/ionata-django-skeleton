@@ -10,7 +10,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 env = Env()
 
 # Bootstrap debug
-DEBUG = env.bool("DEBUG")
+DEBUG = env.bool("DEBUG", default=False)
 
 default_databse_url = env.NOTSET
 
