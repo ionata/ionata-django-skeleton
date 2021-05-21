@@ -30,10 +30,10 @@ services:
     volumes:
       - "home:/root"
       - "venv:/var/www/.venv"
-      - "./pyproject.toml:/var/www/pyproject.toml"
-      - "./poetry.lock:/var/www/poetry.lock"
       - "./src:/var/www/src"
       - "./conf:/var/www/conf"
+      - "./pyproject.toml:/var/www/pyproject.toml"
+      - "./poetry.lock:/var/www/poetry.lock"
       - "./Makefile:/var/www/Makefile"
   celery:
     <<: *backend
