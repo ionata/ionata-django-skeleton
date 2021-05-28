@@ -1,0 +1,18 @@
+version: "0.1"
+dependency_managers:
+  - poetry
+
+django:
+  deploy_commands:
+    - migrate
+    - setup_skeletons
+    - collectstatic --no-input
+
+systemd_units:
+  - "conf/systemd"
+
+nginx:
+  - "conf/nginx"
+
+python:
+  version: "3.7"
