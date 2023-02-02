@@ -59,7 +59,7 @@ pytest = "^5.3.5"
 pytest-django = "^3.8.0"
 tblib = "^1.6.0"
 # running
-werkzeug = "^0.14.1"
+werkzeug = "^0.15.5"
 
 [tool.isort]
 # this configuration makes isort and black compatible
